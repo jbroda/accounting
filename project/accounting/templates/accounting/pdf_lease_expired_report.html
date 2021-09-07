@@ -1,0 +1,78 @@
+<!DOCTYPE>
+<html>
+    <head>
+        <title>Expired Lease Report</title>
+        <style type="text/css">
+            @page {
+                size: {{ pagesize|default:'letter portrait' }};
+                margin: 0.5in 0.75in 0.5in 0.75in;
+                @frame footer {
+                    -pdf-frame-content: footerContent;
+                    bottom: 0.25in;
+                    margin-left: 0.75in;
+                    margin-right: 0.75in;
+                    height: 0.5in;
+                }
+            }
+        </style>
+    </head>
+
+<body>
+    <div id="footerContent">
+        <table style="font-size=large; border-collapse: collapse;">
+            <tr style="border-top:1px solid #000;font-size=large;font-weight:bold;">
+                <td style="padding-top:3px" width=52%>
+                    Hidden Pond Condominium Association, Inc.
+                </td>
+                <td width=23%></td>
+                <td style="text-align:right;padding-top:3px" width=25%>
+                    {{ report_date }}
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    {% for lease_item in leases %}
+    <p>
+        Hidden Pond Condominium Association, Inc.<br>
+        2600 Pirates Cove<br>
+        Schaumburg, IL 60173<br>
+        (224) 366-0060
+    </p>
+
+    <br><br><br><br>
+
+    <p style="margin-left:2em;font-size=x-large;">
+        {% for line in lease_item.address %}
+        {{ line }} <br>
+        {% endfor %}
+    </p>
+
+    <p style="text-align=right;font-size=large;">{{ report_date }}</p>
+    <p style="font-size=large;">
+        <br><br><br>
+        Dear Owner,<br><br>
+        During a routine review of all Hidden Pond leases, we noted that the
+        lease for your unit at <b>
+            {{ lease_item.lease.account.unit_address }}
+            UNIT {{ lease_item.lease.account.unit_number }} </b>has expired.
+
+    <p style="font-size=large;">
+        Please submit a current and complete lease within 30 days of this letter.
+    <p style="font-size=large;">
+        A complete lease consists of a current lease that lists all persons
+        who will be residing in the unit. In addition to the lease, we must
+        have a crime free addendum and lease rider.
+        Credit and criminal checks are required for new tenants. No owner
+        may rent to anyone who has been convicted a crime within the past 10
+        years. The credit and criminal checks are not required for lease
+        renewals.
+        <br><br><br>
+    <p style="font-size=large;">Thank you for your cooperation and understanding!<br><br>
+    <p style="text-align:right;font-size=large;">The Hidden Pond Management Team</p>
+    <pdf:nextpage></pdf:nextpage>
+    {% empty %}
+    There are no expired leases at this time.
+    {% endfor %}
+</body>
+</html>

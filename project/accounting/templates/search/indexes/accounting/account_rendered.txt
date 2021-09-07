@@ -1,0 +1,3 @@
+<a href={{ object.get_absolute_url }}>
+{{ object.unit_address }} Apt {{ object.unit_number }}
+</a>

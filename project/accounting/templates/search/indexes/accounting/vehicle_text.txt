@@ -1,0 +1,3 @@
+{{ object.year_make_and_model }}
+{{ object.license_plate }}
+{{ object.color }}

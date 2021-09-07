@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block title %}Delete {{ owner }}{% endblock %}
+
+{% block page_title %}{% endblock page_title %}
+
+{% block content %}
+
+<form class="form-horizontal" action="" method="post" role="form">{% csrf_token %}
+    <div class="form-group">
+        {% if account.acct_id %}
+            Are you sure you want to remove '<b>{{ owner }}</b>' from account <b>{{ account.acct_id }}</b>?
+        {% else %}
+            Are you sure you want to delete '<b>{{ owner }}</b>'?
+        {% endif %}
+    </div>
+    <div class="form-group">
+        <input type="hidden" name="post" value="yes" />
+        <input class="btn btn-success" type="submit" value="Yes, I'm sure" />
+        <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>
+    </div>
+</form>
+
+{% endblock content %}

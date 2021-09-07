@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% load extras %}
+
+{% block title %}Lease for {{ lease.account.acct_id }} {% endblock %}
+
+{% block page_title %}
+    Lease Information for {{ lease.account.acct_id }}  
+    <i>({{ lease.account.unit_address }} {{ lease.account.unit_number }})</i>
+{% endblock page_title %}
+
+{% block extra_css %}
+
+<style type="text/css">
+    .add-row {
+        padding-left:18px;
+        background:url({{ STATIC_URL }}images/add.png) no-repeat left center;
+    }
+    .delete-row {
+        display:block;
+        margin:6px 0 0 0;
+        padding-left:18px;
+        background:url({{ STATIC_URL }}images/delete.png) no-repeat left center;
+    }
+    .dynamic-form { padding: 5px 15px; }
+    .tenant0 { background-color: #f9f9f9; }
+    .tenant1 { background-color: #f3f3f3; }
+    .tenant2 { background-color: #f0f0f0; }
+    .tenant3 { background-color: #d9d9d9; }
+    .tenant4 { background-color: #d3d3d3; }
+    .tenant5 { background-color: #d0d0d0; }
+</style>
+
+{% endblock extra_css %}
+
+{% block content %}
+
+{% include "accounting/lease_tenant_form.html" %}
+
+{% endblock content %}
+
+{% block extra_js %}
+
+{% if debug %}
+    <script src="{% static 'js/jquery.formset.js' %}"></script>
+    <script src="{% static 'js/accounts/account_form.js' %}"></script>
+{% else %}
+    <script src="{% static 'js/jquery.formset.min.js' %}"></script>
+    <script src="{% static 'js/accounts/account_form.min.js' %}"></script>
+{% endif %}
+
+<script type="text/javascript">
+
+    $(".tenant_container").formset( {
+             prefix: '{{ lease_formset.prefix }}',
+             addText: 'Add Tenant Form',
+             deleteText: 'Remove Tenant Form',
+             added: OnTenantFormAdded,
+             removed: OnTenantFormRemoved,
+             extraClasses: ['tenant0', 'tenant1', 'tenant2', 'tenant3', 'tenant4', 'tenant5']
+        }
+    );
+
+    {% with 'Tenant' as objects %}
+    {% for obj in objects.split %}
+        {% cycle tenant_form as obj_form silent %}
+
+        function clear{{obj}}Form(formSel) {
+            // Clear all fields in the {{obj}} form (except for account).
+            {% for f in obj_form %}
+                {% if f.name != "account" %}
+                    $(formSel + "[id$='" + "{{f.name}}" + "']").val("");
+                {% endif %}
+            {% endfor %}
+        }
+
+        function make{{obj}}FormReadOnly(formSel, bReadOnly) {
+            // Make all fields in the {{obj}} form "read-only".
+            {% for f in obj_form %}
+                {% if f.name != "account" %}
+                    $(formSel + "[id$='" + "{{f.name}}" + "']").attr("readonly", bReadOnly);
+                {% endif %}
+            {% endfor %}
+        }
+    {% endfor %}
+    {% endwith %}
+
+</script>
+
+{% endblock extra_js %}

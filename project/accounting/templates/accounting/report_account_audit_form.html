@@ -1,0 +1,89 @@
+<div id="accountAuditPanel" class="panel panel-default">
+
+    <a class="report-anchor" id="account_audit"></a>
+
+    <div class="panel-heading">
+        <a class="panel-title" data-toggle="collapse" href="#account_audit_panel">
+            Account Audit Report 
+        </a>
+    </div>
+
+    <div id="account_audit_panel" class="panel-collapse collapse">
+        <div class="panel-body">
+            <p>This report checks account ledgers and prints any transactions that may need special handling.  </p>
+            <small>
+                <ul>
+                    <li> Enter the start date for audit date range
+                    <li> Enter the end date for audit date range
+                    <li> Press "Get Report"
+                </ul>    
+            </small>
+
+            <form name="account-audit-report-form" id="account-audit-report-form" 
+                    class="form-horizontal" role="form">
+                {% csrf_token %} 
+                {% if form.errors %}
+                <div class="panel panel-default">
+                    <div class="panel-body"> {{ form.errors }}
+                    </div>
+                </div> 
+                {% endif %}
+
+                <div class="form-group">
+                    <div class="col-sm-7">
+                    <label for="account_audit_bdate" 
+                           class="col-sm-1 control-label">
+                                From</label>
+
+                    <div class="col-sm-5">
+                        <div class="input-group date" id="dtpicker_account_audit_start"
+                              data-date-format="MMMM DD, YYYY">
+                            <input tabindex="4" class="form-control" 
+                                id="account_audit_bdate" name="account_audit_bdate" 
+                                type="text"
+                                value="{{ form.date.value|date:'F d, Y'}}" />
+                            <span class="input-group-addon">
+                                <span class="fa fa-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <label for="account_audit_edate" 
+                           class="col-sm-1 control-label">
+                                To</label>
+                    <div class="col-sm-5">
+                        <div class="input-group date" id="dtpicker_account_audit_end"
+                              data-date-format="MMMM DD, YYYY">
+                            <input tabindex="5" class="form-control" 
+                                id="account_audit_edate" name="account_audit_edate" 
+                                type="text"
+                                value="{{ form.date.value|date:'F d, Y'}}" />
+                            <span class="input-group-addon">
+                                <span class="fa fa-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                    </div>
+
+                    <div class="col-sm-2">
+                        <button tabindex="6" type="submit"
+                                class="btn btn-block btn-success" 
+                                title="Get Account Audit Report"
+                                id="get_account_audit_report">
+                                   Get Report 
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="account_audit_report-progress" style="display:none">
+                {% include "accounting/report_progress_bar.html" %}
+            </div>
+
+            {% if reports.account_audit%}
+                {% include "accounting/report_list.html" with report_name="Account Audit" report_type="account_audit" %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% load extras %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block page_title %}Search Results{% endblock page_title %}
+
+{% block content %}
+
+You searched for "{{ query_string }}" and the results are listed below.
+
+{% for result in found_entries %}
+    <li>
+        <a href="{{ result.get_absolute_url }}">
+            {% with result|classname as modelclass %}
+            {% if modelclass == "Account" %}
+                {{ result.unit_address }}
+                Apt {{ result.unit_number}}
+            {% else %}
+                {{ result }}
+            {% endif %}
+            {% endwith %}
+        </a>
+    </li>
+{% endfor %}
+
+{% endblock content %}

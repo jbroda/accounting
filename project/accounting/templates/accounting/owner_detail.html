@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block title %}{{ owner }}{% endblock %}
+
+{% block page_title %} {% endblock page_title %}
+
+{% block extra_css %}
+
+<link href="{% static 'css/dataTables.bootstrap.css' %}" rel="stylesheet">
+
+{% endblock extra_css %}
+
+{% block content %}
+
+<div class="panel panel-default">
+    <div class="panel-heading">Owner Info</div>
+    <div class="panel-body">
+        <table class="table table-bordered table-condensed table-striped dataTable">
+            <tr>
+                <td><b>First Name:</b></td>
+                <td>{{ owner.first_name }}</td>
+            </tr>
+            <tr>
+                <td><b>Last Name:</b></td>
+                <td>{{ owner.last_name }}</td>
+            </tr>
+            <tr>
+                <td><b>Home Phone:</b></td>
+                <td><a href="tel:{{owner.home_phone}}">{{ owner.home_phone }}</a></td>
+            </tr>
+            <tr>
+                <td><b>Cell Phone:</b></td>
+                <td><a href="tel:{{owner.cell_phone}}">{{ owner.cell_phone }}</a></td>
+            </tr>
+            <tr>
+                <td><b>E-mail:</b></td>
+                <td><a href="mailto:{{owner.email}}">{{ owner.email }}</a></td>
+            </tr>
+            <tr>
+                <td><b>Address:</b></td>
+                <td>{{ owner.address }}</td>
+            </tr>
+            <tr>
+                <td><b>City:</b></td>
+                <td>{{ owner.city }}</td>
+            </tr>
+            <tr>
+                <td><b>State:</b></td>
+                <td>{{ owner.state }}</td>
+            </tr>
+            <tr>
+                <td><b>Zip:</b></td>
+                <td>{{ owner.zip }}</td>
+            </tr>
+            <tr>
+                <td><b>Accounts:</b>
+                <td>
+                    {% if owner.account.all|length > 0 %}
+                        {% for account in owner.account.all %}
+                        <a href="{% url 'accounts:detail' account.id  %}">{{ account.acct_id }}</a>{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        None
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+
+        {% if user.is_staff %}
+            {% if owner.account.all|length > 0 %}
+                <a class="btn btn-primary" href="{% url 'accounts:owner_update' owner.id owner.account.first.id %}">Edit</a>
+            {% else %}
+                <a class="btn btn-primary" href="{% url 'accounts:owner_delete' owner.id %}">Delete</a>
+            {% endif %}
+            <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock content %}
+

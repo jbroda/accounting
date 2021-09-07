@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% load extras %}
+
+{% block title %}Tenant for {{ account.acct_id }} {% endblock %}
+
+{% block page_title %}
+    Tenant Information for {{ account.acct_id }}  
+    <i>({{ account.unit_address }} {{ account.unit_number }})</i>
+{% endblock page_title %}
+
+{% block extra_css %}
+
+{% endblock extra_css %}
+
+{% block content %}
+
+<form enctype="multipart/form-data"  class="form-horizontal" role="form" action="" method="post">
+    {% csrf_token %}
+    {% for f in form %}
+            <div class="form-group" {% if f.name == "lease" %} style="display:none" {% endif %}>
+                <label class="col-sm-2 control-label" for="{{ f.id_for_label }}">{{ f.label }}</label>
+                <div class="col-sm-6">
+                    {{ f.errors }}
+                    {{ f|addcss:"form-control" }}
+                    {{ f.help_text }}
+                </div>
+            </div>
+    {% endfor %}
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <input class="btn btn-success" type="submit" value="Submit changes" />
+            <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>
+        </div>
+    </div>
+</form>
+
+{% endblock content %}
+
+{% block extra_js %}
+
+{% endblock extra_js %}

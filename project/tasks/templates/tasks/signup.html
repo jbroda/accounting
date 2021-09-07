@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+
+{% block title %}Register a new user{% endblock %}
+
+{% block body %}
+
+<style>
+form.signup-form {
+        border-top: 1px solid #8dbdd8;
+        border-bottom: 1px solid #8dbdd8;
+        background-color: #F0F0F6;
+        width: auto;
+        font-size: 1.0em;
+        color: #333;
+}
+
+form.signup-form label.error, label.error {
+        color: red;
+        margin-left: 10px;
+        width: auto;
+        font-style: italic;
+        font-weight: bold;
+        display:inline
+}
+div.error { display: none; }
+</style>
+
+<h4>Register a new user</h4>
+
+<form name="signup-form" class="signup-form" id="signup-form" action="/signup" method="POST">
+ <table>
+  <tr>
+   <td>
+	<label for="name">First Name</label>
+   </td>
+   <td>
+	<input type="text" id="name" name="name" />
+   </td>
+  </tr>
+  <tr>
+   <td>
+    <label for="lastname">Last Name</label>
+   </td>
+   <td>
+	<input type="text" id="lastname" name="lastname" />
+   </td>
+  </tr>
+  <tr>
+   <td>
+	<label for="username">Username</label>
+   </td>
+   <td>
+    <input type="text" id="username" name="username" />
+   </td>
+  </tr>
+  <tr>
+   <td>
+	<label for="password">Password</label>
+   </td>
+   <td>
+	<input type="password" id="password" name="password" />
+   </td>
+  </tr>
+  <tr>
+   <td>
+	<label for="confirm_password">Confirm Password</label>
+   </td>
+   <td>
+	<input type="password" id="confirm_password" name="confirm_password"/>
+   </td>
+  </tr>
+  <tr>
+   <td>
+	<label for="email">Email address</label>
+   </td>
+   <td>
+	<input type="email" id="email" name="email" />
+   </td>
+  </tr>
+  </table>
+  <div class="error">
+  </div>
+ <p>
+   <input type="submit" value="Create user" />
+ </p>
+</form>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // When the page loads.
+  $(document).ready(function() {
+    // validate the login form on keyup and submit
+	$("#signup-form").validate({
+        //errorLabelContainer:
+        //   $("#signup-form div.error"),
+		rules: {
+			name: "required",
+			lastname: "required",
+			username: {
+				required: true,
+				minlength: 2
+			},
+			password: {
+				required: true,
+				minlength: 4
+			},
+			confirm_password: {
+				required: true,
+				minlength: 4,
+				equalTo: "#password"
+			},
+			email: {
+				required: true,
+				email: true
+			}
+		},
+		messages: {
+			name: "Please enter your first name<br>",
+			lastname: "Please enter your last name<br>",
+			username: {
+				required: "Please enter a username<br>",
+				minlength: "Your username must consist of at least 2 characters<br>"
+			},
+			password: {
+				required: "Please provide a password<br>",
+				minlength: "Your password must be at least 4 characters long<br>"
+			},
+			confirm_password: {
+				required: "Please provide a password<br>",
+				minlength: "Your password must be at least 4 characters long<br>",
+				equalTo: "Please enter the same password as above<br>"
+			},
+			email: "Please enter a valid e-mail address<br>"
+		}
+	});
+  });
+</script>
+{% endblock %}

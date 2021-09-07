@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block title %}{{ tenant }}{% endblock %}
+
+{% block page_title %} {% endblock page_title %}
+
+{% block extra_css %}
+
+<link href="{% static 'css/dataTables.bootstrap.css' %}" rel="stylesheet">
+
+{% endblock extra_css %}
+
+{% block content %}
+
+<div class="panel panel-default">
+    <div class="panel-heading">Tenant Info</div>
+    <div class="panel-body">
+        <table class="table table-bordered table-condensed table-striped dataTable">
+            <tr>
+                <td><b>First Name:</b></td><td>{{ tenant.first_name }}</td>
+            </tr>
+            <tr>
+                <td><b>Last Name:</b></td><td>{{ tenant.last_name }}</td>
+            </tr>
+            <tr>
+                <td><b>Home Phone:</b></td><td><a href="tel:{{tenant.home_phone}}">{{ tenant.home_phone }}</a></td>
+            </tr>
+            <tr>
+                <td><b>Cell Phone:</b></td><td><a href="tel:{{tenant.cell_phone}}">{{ tenant.cell_phone }}</a></td>
+            </tr>
+            <tr>
+                <td><b>E-mail:</b></td><td><a href="mailto:{{tenant.email}}">{{ tenant.email }}</a></td>
+            </tr>
+            <tr>
+                <td><b>Unit Address:</b></td><td>{{ tenant.lease.account.unit_address }} Apt {{ tenant.lease.account.unit_number }}</td>
+            </tr>
+            <tr>
+                <td><b>Is a Relative of the Owner?</b></td>
+                <td> {{ tenant.is_owners_relative }} </td>
+            </tr>
+            <tr>
+                <td><b>Account:</b>
+                <td>
+                    {% if tenant.lease %}
+                        <a href="{% url 'accounts:detail' tenant.lease.account.id  %}">{{ tenant.lease.account.acct_id }}</a>
+                    {% else %}
+                        None
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+        
+        {% if user.is_staff %}
+            {% if tenant.lease %}
+                <a class="btn btn-primary" href="{% url 'accounts:tenant_update' tenant.id tenant.lease.account.id %}">Edit</a>
+            {% else %}
+                <a class="btn btn-warning" href="{% url 'accounts:tenant_delete' tenant.id %}">Delete Tenant</a>
+            {% endif %}
+            <a class="btn btn-danger"  href="javascript:history.back()">Cancel</a>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock content %}
+

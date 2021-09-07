@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block title %}Delete {{ vehicle }}{% endblock %}
+
+{% block page_title %}{% endblock page_title %}
+
+{% block content %}
+
+<form class="form-horizontal" action="" method="post" role="form">
+    {% csrf_token %}
+    <div class="form-group">
+        Are you sure you want to delete {{ vehicle.year_make_and_model }}
+        {% if account %} from {{ account.acct_id }}{% endif %}?
+    </div>
+    <div class="form-group">
+        <input type="hidden" name="post" value="yes" />
+        <input class="btn btn-success" type="submit" value="Yes, I'm sure" />
+        <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>
+    </div>
+</form>
+
+{% endblock content %}

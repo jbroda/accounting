@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+
+{% load humanize staticfiles %}
+
+{% block title %}{{ account.acct_id }}{% endblock %}
+
+{% block page_title %}{% endblock page_title %}
+
+{% block extra_css %}
+
+{% if debug %}
+    <link href="{% static 'css/dataTables.bootstrap.css' %}" rel="stylesheet"/>
+    <link href="{% static 'css/buttons.bootstrap.css' %}" rel="stylesheet"/>
+    <link href="{% static 'css/buttons.dataTables.css' %}" rel="stylesheet"/>
+
+    <link href="{% static 'css/bootstrap-datetimepicker.css' %}" rel="stylesheet"/>
+    <link href="{% static 'css/bootstrap-editable.css' %}" rel="stylesheet"/>
+{% else %}
+    <link href="{% static 'css/dataTables.bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/buttons.bootstrap.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'css/buttons.dataTables.min.css' %}" rel="stylesheet"/>
+
+    <link href="{% static 'css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'css/bootstrap-editable.min.css' %}" rel="stylesheet"/>
+{% endif %}
+
+<style type="text/css">
+/* Make inline editables take the full width of their parents */
+.editable-container.editable-inline,
+.editable-container.editable-inline .control-group.form-group,
+.editable-container.editable-inline .control-group.form-group .editable-input,
+.editable-container.editable-inline .control-group.form-group .editable-input input:not([type=radio]):not([type=checkbox]):not([type=submit])
+{
+    width: 100%;
+}
+.editable-container.editable-inline
+{
+    width: 70%;
+}
+</style>
+
+{% endblock extra_css %}
+
+{% block content %}
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        <table class="table table-condensed table-no-border dataTable" style="text-align: center;">
+            <tbody>
+                <tr>
+                    <td><b>{{ account.acct_id }}</b> / <span style="font-size: 0.65em">{{account.orig_id}}</span>: {{ account.unit_address }} #{{ account.unit_number }}</td>
+                    <td>
+                        {% with balance=account.entry_set.last.balance %}
+                        <b>Balance: <span style="color:{% if balance <= 0 %} green {% else %} red {% endif %}" id="balance">{{ balance|default:0|floatformat:2|intcomma }}</span></b>
+                        {% endwith %}
+                    </td>
+                    <td>
+                        <input id="unit_address" type="hidden" value="{{account.unit_address}}" />
+                        <input id="unit_number" type="hidden" value="{{account.unit_number}}" />
+
+                        <div style="outline: 1px dotted #c4bfbf;">
+                            <input type="checkbox"
+                                   id="payment_plan" {% if account.is_payment_plan %} checked="checked" {% endif %}
+                                   {% if not user.is_staff %} disabled="disabled" {% endif %} />
+                            <b>Payment Plan</b>
+                        </div>
+                    </td>
+
+                    <td>
+                        <div style="outline: 1px dotted #c4bfbf;">
+                            <input type="checkbox"
+                                   id="no_statement" {% if account.is_no_statement %} checked="checked" {% endif %}
+                                   {% if not user.is_staff %} disabled="disabled" {% endif %} />
+                            <b>No Statement</b>
+                        </div>
+                    </td>
+                    <td>
+                        <b>PIN:</b>
+                        <a href="http://{{request.get_host}}{% url 'accounts:pin_info' account.id account.pin %}"><small>{{account.pin}}</small></a>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <b>Owners:</b>
+                        <a href="{% url 'accounts:update' account.id %}#owners">
+                            {% if account.owner_set.count > 0 %}
+                                {% for owner in account.owner_set.all %}
+                                    {{ owner.last_name }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                None
+                            {% endif %}
+                        </a>
+                    </td>
+                    <td>
+                        <b>Tenants:</b>
+                        <a href="{% url 'accounts:update' account.id %}#lease">
+                            {% if account.lease and account.lease.tenant_set.count > 0 %}
+                                {% for tenant in account.lease.tenant_set.all %}
+                                    {{ tenant.last_name }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                None
+                            {% endif %}
+                        </a>
+                    </td>
+                    <td>
+                        <div style="outline: 1px dotted #c4bfbf;">
+                            <input type="checkbox"
+                                   id="email_statement" {% if account.is_email_statement %} checked="checked" {% endif %}
+                                   {% if not user.is_staff %} disabled="disabled" {% endif %} />
+                            <b>E-mail Stmnt</b>
+                        </div>
+                    </td>
+                    <td>
+                        <b>Vehicles:</b>
+                        <a href="{% url 'accounts:update' account.id %}#vehicles">
+                            {% if account.vehicle_set.count > 0 %}
+                                {% for vehicle in account.vehicle_set.all %}
+                                    {{ vehicle.license_plate }}{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                            {% else %}
+                                None
+                            {% endif %}
+                        </a>
+                    </td>
+                    <td>
+                    {% if user.is_staff %}
+                        <b>Statements:</b>
+                        <a class="statement" id="full" href="/accounting/report/statement/{% now 'Y-m-d' %}/{{account.acct_id}}/full/">Full</a>
+                        /
+                        <a class="statement" id="simple" href="/accounting/report/statement/{% now 'Y-m-d' %}/{{account.acct_id}}/simple/">Simple</a>
+                        /
+                        <a class="statement" id="reo" href="/accounting/report/statement/{% now 'Y-m-d' %}/{{account.acct_id}}/reo/">REO</a>
+                    {% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+    </div>
+</div>
+
+<!-- A hidden table to provide the account id to the entry form -->
+<div style="display:none">
+    <table id="accounts-table" class="dataTable">
+        <thead><tr><th>Account</th></tr></thead>
+        <tbody id="accounts_body">
+            <tr>
+                <td class="text-center">
+                    <input checked="checked"
+                           type="checkbox" 
+                           class="selectedId" 
+                           title="Select {{ account.acct_id }}"
+                           name="accounts"
+                           value="{{ account.acct_id }}"
+                           id="select_{{ account.acct_id }}"/>
+                </td>
+           </tr>
+        </tbody>
+    </table>
+</div>
+
+{% include "accounting/entry_form.html" %}
+
+<table id="transaction-table"
+       class="table table-bordered table-hover table-condensed table-striped dataTable">
+    <thead>
+        <tr>
+            <th data-defaultsort="asc">Date</th>
+            <th>Description</th>
+            <th class="text-right">Amount</th>
+            <th class="text-right">Balance</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for entry in account.entry_set.all %}
+        <tr>
+            <td>{{ entry.datetime|date:"m/d/Y" }}</td>
+            <td>
+                <span class="editable_memo" id="memo"
+                      data-params="{csrfmiddlewaretoken:'{{csrf_token}}'}"
+                      data-url="{% url 'accounts:entry_update' entry.pk %}"
+                      data-pk="{{entry.pk}}">{{ entry.memo }}</span>
+            </td>
+            <td class="text-right" 
+                style="color:{% if entry.amount <= 0 %} green {% else %} red {% endif %}">
+                {{ entry.amount|floatformat:2|intcomma }}
+            </td>
+            <td class="text-right"
+                style="color:{% if entry.balance <= 0 %} green {% else %} red {% endif %}">
+                {{ entry.balance|floatformat:2|intcomma }}
+            </td>
+            <td style="display:none;">{{ entry.datetime|date:"m/d/Y, h:i:s a" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr>
+            <td></td>
+            <td></td>
+            <td id="{{account.acct_id}}" 
+                class="text-right"
+                colspan=2
+                style="font-weight:bold;color:{% if account.computed_balance <= 0 %} green {% else %} red {% endif %}">
+                Balance: {{ account.computed_balance|floatformat:2|intcomma }}
+            </td>
+        </tr>
+    </tfoot>
+</table>
+
+{% endblock content %}
+
+{% block extra_js %}
+
+{% if debug %}
+    <script src="{% static 'js/bootbox.js' %}"></script>
+
+    <script src="{% static 'js/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap.js' %}"></script>
+    <script src="{% static 'js/dataTables.buttons.js' %}"></script>
+    <script src="{% static 'js/buttons.bootstrap.js' %}"></script>
+    <script src="{% static 'js/buttons.html5.js' %}"></script>
+    <script src="{% static 'js/buttons.print.js' %}"></script>
+
+    <script src="{% static 'js/bootstrap-editable.js' %}"></script>
+    <script src="{% static 'js/moment.js' %}"></script>
+    <script src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
+
+    <script src="{% static 'js/accounts/csrf.js' %}"></script>
+    <script src="{% static 'js/accounts/dateTimeSort.js' %}"></script>
+    <script src="{% static 'js/accounts/DateTime.js' %}"></script>
+    <script src="{% static 'js/accounts/account_detail.js' %}"></script>
+    <script src="{% static 'js/accounts/entry_form.js' %}"></script>
+{% else %}
+    <script src="{% static 'js/bootbox.min.js' %}"></script>
+
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static 'js/buttons.bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/buttons.html5.min.js' %}"></script>
+    <script src="{% static 'js/buttons.print.min.js' %}"></script>
+
+    <script src="{% static 'js/bootstrap-editable.min.js' %}"></script>
+    <script src="{% static 'js/moment.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
+
+    <script src="{% static 'js/accounts/csrf.min.js' %}"></script>
+    <script src="{% static 'js/accounts/dateTimeSort.min.js' %}"></script>
+    <script src="{% static 'js/accounts/DateTime.min.js' %}"></script>
+    <script src="{% static 'js/accounts/account_detail.min.js' %}?ver=1.0"></script>
+    <script src="{% static 'js/accounts/entry_form.min.js' %}"></script>
+{% endif %}
+
+{% if not user.is_staff %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        // Remove the edit mode button.
+        $(".editmode",".dataTables_wrapper").remove();
+
+        // Adjust the table tools columns after removing the edit mode button.
+        $(".tools", ".dataTables_wrapper").removeClass('col-sm-3');
+        $(".tools", ".dataTables_wrapper").addClass('col-sm-4');
+    });
+</script>
+{% endif %}
+
+{% endblock extra_js %}
+

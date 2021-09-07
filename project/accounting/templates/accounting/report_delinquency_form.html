@@ -1,0 +1,75 @@
+<div id="delinquencyPanel" class="panel panel-default">
+    
+    <a class="report-anchor" id="delinquency"></a>
+
+    <div class="panel-heading">
+        <a class="panel-title" data-toggle="collapse" href="#delinquency_panel">
+           Delinquency Report 
+        </a>
+    </div>
+
+    <div id="delinquency_panel" class="panel-collapse collapse">
+        <div class="panel-body">
+            <p>This report generates the delinquent account status as
+            of the specified date.</p>
+            <small>
+                <ul>
+                    <li> Enter the date as of when delinquent accounts should 
+                         be generated.
+                    <li> Press "Get Report"
+                </ul>    
+            </small>
+
+            <form name="delinq-report-form" id="delinq-report-form" 
+                    class="form-horizontal" role="form">
+                {% csrf_token %} 
+                {% if form.errors %}
+                <div class="panel panel-default">
+                    <div class="panel-body"> {{ form.errors }}
+                    </div>
+                </div> 
+                {% endif %}
+
+                <div class="container">
+                    <div class=col-sm-6>
+                        <div class="form-group">
+                            <label for="delinq_date" 
+                                   class="col-sm-1 control-label">
+                                        Date</label>
+
+                            <div class="col-sm-7">
+                                <div class="input-group date" id="dtpicker"
+                                      data-date-format="MMMM DD, YYYY">
+                                    <input tabindex="9" class="form-control" 
+                                        id="delinq_date" name="delinq_date" 
+                                        type="text"
+                                        value="{{ form.date.value|date:'F d, Y'}}" />
+                                    <span class="input-group-addon">
+                                        <span class="fa fa-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <button tabindex="10" type="submit"
+                                        class="btn btn-block btn-success" 
+                                        title="Get Delinquency Report"
+                                        id="get_d_report">
+                                           Get Report 
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="delinquency-progress" style="display:none">
+                {% include "accounting/report_progress_bar.html" %}
+            </div>
+
+            {% if reports.delinquency %}
+                {% include "accounting/report_list.html" with report_name="Delinquency" report_type="delinquency" %}
+            {% endif %}
+        </div>
+    </div>
+</div>

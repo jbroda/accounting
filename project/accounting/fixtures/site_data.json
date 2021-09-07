@@ -1,0 +1,73 @@
+[
+    {
+        "pk": 1,
+        "model": "sites.site",
+        "fields": {
+            "domain": "my.XXXXXXXXX.XX",
+            "name": "my.XXXXXXXXX.XX"
+        }
+    },
+
+    {
+        "pk": 100,
+        "model": "hiddenpond.MyUser",
+        "fields": {
+            "username": "jbroda",
+            "first_name": "Jacek",
+            "last_name": "Broda",
+            "is_active": true,
+            "is_superuser": true,
+            "is_staff": true,
+            "last_login": "2014-11-11T18:33:48.947Z",
+            "groups": [ ],
+            "user_permissions": [ ],
+            "password": "pbkdf2_sha256$12000$FkwpptwjcmXH$qgR4+3Ccyv17OZOVitau3UnJyOr9xxbYXhelj29J+3s=",
+            "email": "jbroda@gmail.com",
+            "date_joined": "2014-11-11T18:33:34.527Z",
+            "phone_number" :  "847-220-7099",
+            "owner" : null
+        }
+    },
+
+    {
+        "pk": 101,
+        "model": "hiddenpond.MyUser",
+        "fields": {
+            "username": "mihamih",
+            "first_name": "",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": true,
+            "last_login": "2014-11-11T18:34:56Z",
+            "groups": [ ],
+            "user_permissions": [ ],
+            "password": "pbkdf2_sha256$12000$NRetGyV38UjN$AWpdCsT+YBNxP2550U4b600/zSekAkJs7BaxwQt7WQc=",
+            "email": "mihamih@yahoo.com",
+            "date_joined": "2014-11-11T18:34:56Z",
+            "phone_number" :  "847-220-7076",
+            "owner" :  null
+        }
+    },
+
+    {
+        "pk": 102,
+        "model": "hiddenpond.MyUser",
+        "fields": {
+            "username": "readonly",
+            "first_name": "Read",
+            "last_name": "Only",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2014-03-25T15:57:12.461Z",
+            "groups": [ ],
+            "user_permissions": [ ],
+            "password": "pbkdf2_sha256$12000$KeR4TOEaHOHL$sa+1Ck98J7WfoK+qTct1258otcP5PBHTEUO5vK/7OHM=",
+            "email": "hidden.puddle@gmail.com",
+            "date_joined": "2014-03-25T15:21:21.159Z",
+            "phone_number" :  "224-366-0060",
+            "owner" : null
+        }
+    }
+]

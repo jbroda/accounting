@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<h4>Recover password</h4>
+
+<p>Forgot your password? </p>
+
+<p>Enter your username and 
+press the button below to receive a link to recover your password.</p>
+
+{% if not_found %}
+    <strong>Not found!</strong> We could not find any user with the given username.
+    <br>
+    <br>
+{% endif %} 
+
+<form class="form" action= "/forgot" method="POST">
+	Username:<input type="text" value="{{ username }}" name="username"/>
+	<input type="submit" value="Send password reset link"/>
+</form>
+
+{% endblock %}

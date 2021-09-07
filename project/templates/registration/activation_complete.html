@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block page_title %}{% endblock page_title %}
+
+{% block title %}{% trans 'Account activation complete' %}{% endblock %}
+
+{% block content %}
+
+<h1>{% trans 'Account activation complete' %}</h1>
+
+<p>{% trans "Your account has been activated.  You may go ahead and log in now." %}</p>
+
+<p><a href="{{ login_url|default:'/' }}">{% trans 'Log in' %}</a></p>
+
+{% endblock %}

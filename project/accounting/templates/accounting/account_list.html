@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+
+{% load humanize staticfiles %}
+
+{% block title %}Accounts{% endblock %}
+
+{% block page_title %}{% endblock page_title %}
+
+{% block extra_css %}
+
+{% if debug %}
+    <link href="{% static 'css/dataTables.bootstrap.css' %}" rel="stylesheet"/>
+    <link href="{% static 'css/buttons.bootstrap.css' %}" rel="stylesheet"/>
+    <link href="{% static 'css/buttons.dataTables.css' %}" rel="stylesheet"/>
+
+    <link href="{% static 'css/bootstrap-datetimepicker.css' %}" rel="stylesheet"/>
+{% else %}
+    <link href="{% static 'css/dataTables.bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'css/buttons.bootstrap.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'css/buttons.dataTables.min.css' %}" rel="stylesheet"/>
+
+    <link href="{% static 'css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet">
+{% endif %}
+
+{% endblock extra_css %}
+
+{% block content %}
+
+{% if account_list %}
+
+    {% include "accounting/entry_form.html" %}
+
+    <table id="accounts-table"
+           class="table table-bordered table-hover table-condensed table-striped dataTable">
+        <thead>
+            <tr>
+                <th class="text-center">
+                    <input id="select_all_head" 
+                           name="select_all_head"
+                           class="selectedId" 
+                           title="Select All" 
+                           type="checkbox"/>
+                </th>
+                <th class="text-center" data-defaultsort="asc">Account</th> 
+                <th class="text-center">Address</th>
+                <th class="text-center">Balance</th> 
+                <th class="text-center">Info</th>
+            </tr>
+        </thead>
+
+        <tbody id="accounts_body">
+            {% for account in account_list %}
+            <tr>
+                <td class="text-center">
+                    <input type="checkbox" 
+                           class="selectedId" 
+                           title="Select {{ account.acct_id }}"
+                           name="accounts"
+                           value="{{ account.acct_id }}"
+                           id="select_{{ account.acct_id }}"/>
+                </td>
+                <td class="text-center">
+                    <a title="History for {{ account.acct_id }}" 
+                       href="{% url 'accounts:detail' account.id %}">
+                        {{ account.acct_id }} <span style="font-size: 0.65em;">/ {{ account.orig_id }}</span>
+                    </a>
+                </td>
+                <td class="text-center">{{ account.unit_address }} Apt {{ account.unit_number }}</td>
+                <td class="text-center">
+                    {% with balance=account.balance %}
+                    <a id="{{account.acct_id}}" title="History for {{ account.acct_id }}" 
+                       style="color:{% if balance <= 0 %} green {% else %} red {% endif %}"
+                       href="{% url 'accounts:detail' account.id %}"><b>{{ balance|floatformat:2|intcomma }}</b></a>
+                    {% endwith %}
+                </td>
+                <td class="text-center">
+                    <a title="Owner Info" href="{% url 'accounts:update' account.id %}#owners">Owner</a> /
+                    <a title="Lease Info" href="{% url 'accounts:update' account.id %}#lease">Tenant</a> /
+                    <a title="Vehicle Info" href="{% url 'accounts:update' account.id %}#vehicles">Vehicle</a>
+              </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+
+        <tfoot>
+            <tr>
+                <th class="text-center">
+                    <input id="select_all_foot" 
+                           name="select_all_foot"
+                           class="selectedId" 
+                           title="Select All" 
+                           type="checkbox"/>
+                </th>
+                <th class="text-center" data-defaultsort="asc">Account</th>
+                <th class="text-center">Address</th>
+                <th class="text-center">Balance</th>
+                <th class="text-center">Owner</th>
+            </tr>
+        </tfoot>
+    </table>
+
+{% else %}
+    {% if form.errors %}
+        {{ form.errors }}
+    {% else %}
+        <p>No accounts are available.</p>
+    {% endif %}
+{% endif %}
+
+{% endblock content %}
+
+{% block extra_js %}
+
+{% if debug %}
+    <script src="{% static 'js/bootbox.js' %}"></script>
+
+    <script src="{% static 'js/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap.js' %}"></script>
+    <script src="{% static 'js/dataTables.buttons.js' %}"></script>
+    <script src="{% static 'js/buttons.bootstrap.js' %}"></script>
+    <script src="{% static 'js/buttons.html5.js' %}"></script>
+    <script src="{% static 'js/buttons.print.js' %}"></script>
+
+    <script src="{% static 'js/moment.js' %}"></script>
+    <script src="{% static 'js/bootstrap-datetimepicker.js' %}"></script>
+
+    <script src="{% static 'js/accounts/csrf.js' %}"></script>
+    <script src="{% static 'js/accounts/naturalSort.js' %}"></script>
+    <script src="{% static 'js/accounts/account_list.js' %}"></script>
+    <script src="{% static 'js/accounts/entry_form.js' %}"></script>
+{% else %}
+    <script src="{% static 'js/bootbox.min.js' %}"></script>
+
+    <script src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static 'js/buttons.bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/buttons.html5.min.js' %}"></script>
+    <script src="{% static 'js/buttons.print.min.js' %}"></script>
+
+    <script src="{% static 'js/moment.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
+
+    <script src="{% static 'js/accounts/csrf.min.js' %}"></script>
+    <script src="{% static 'js/accounts/naturalSort.min.js' %}"></script>
+    <script src="{% static 'js/accounts/account_list.min.js' %}?ver=1.0"></script>
+    <script src="{% static 'js/accounts/entry_form.min.js' %}"></script>
+{% endif %}
+
+{% endblock extra_js %}

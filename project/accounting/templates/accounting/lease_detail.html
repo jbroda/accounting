@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block title %}{{ lease }}{% endblock %}
+
+{% block page_title %} {% endblock page_title %}
+
+{% block extra_css %}
+
+<link href="{% static 'css/dataTables.bootstrap.css' %}" rel="stylesheet">
+
+{% endblock extra_css %}
+
+{% block content %}
+
+<div class="panel panel-default">
+    <div class="panel-heading">Lease Info</div>
+    <div class="panel-body">
+        <table class="table table-bordered table-condensed table-striped dataTable">
+            <tr>
+                <td><b>Start Date:</b></td><td>{{ lease.start_date }}</td>
+            </tr>
+            <tr>
+                <td><b>End Date:</b></td><td>{{ lease.end_date }}</td>
+            </tr>
+            <tr>
+                <td><b>Monthly Rent:</b></td><td>{{ lease.monthly_rent }}</td>
+            </tr>
+            <tr>
+                <td><b>LeaseFile:</b></td>
+                <td>
+                    {% if lease.lease_file %}
+                    <a href="{{ lease.lease_file.url }}">
+                    {{ lease.lease_file }}</a>
+                    {% else %}
+                    None
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td><b>Account:</b>
+                <td>
+                    <a href="{% url 'accounts:detail' lease.account.id  %}">{{ lease.account.acct_id }}</a>
+                </td>
+            </tr>
+        </table>
+        
+        {% if user.is_staff %}
+        <a class="btn btn-primary" href="{% url 'accounts:lease_update' lease.id lease.account.id %}">Edit</a>
+        <a class="btn btn-danger"  href="javascript:history.back()">Cancel</a>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock content %}
+

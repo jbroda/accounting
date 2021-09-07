@@ -1,0 +1,113 @@
+<div id="leasePanel" class="panel panel-default">
+    
+    <a class="report-anchor" id="lease"></a>
+
+    <div class="panel-heading">
+        <a class="panel-title" data-toggle="collapse" href="#lease_panel">
+           Lease Reports 
+        </a>
+    </div>
+
+    <div id="lease_panel" class="panel-collapse collapse">
+        <div class="panel-body">
+            <p>This report can generate 3 types of lease reports as
+            of the specified date. Usually one would just get the report
+            as of the current date but if needed a date in the past can
+            also be specified</p>
+            <small>
+                <ul>
+                    <li> Select the type of report you want to generate. 
+                        <ul>
+                        <li>
+                        <b>Expired leases</b> shows what units have an expired 
+                        lease and need to be contacted requesting a renewal 
+                        lease. 
+                        <li><b>Village of Schaumburg</b> is the report that 
+                        needs to be submitted yearly to the village with the 
+                        association license application. 
+                        <li><b>FHA Report</b> is 
+                        the rental unit report that needs to be provided to FHA 
+                        every two years for the purpose of FHA Certification.
+                        </ul>
+                    <li> Enter the date as of when the report should 
+                         be generated.
+                    <li> Press "Get Report"
+                </ul>    
+            </small>
+
+            <form name="lease-report-form" id="lease-report-form" 
+                    class="form-horizontal" role="form">
+                {% csrf_token %} 
+                {% if form.errors %}
+                <div class="panel panel-default">
+                    <div class="panel-body"> {{ form.errors }}
+                    </div>
+                </div> 
+                {% endif %}
+
+                <div class="form-group">
+                    <div class="col-sm-4">
+                    <label for="lease_date" 
+                           class="col-sm-2 control-label">
+                                Date</label>
+
+                    <div class="col-sm-10">
+                        <div class="input-group date" id="dtpicker_lease"
+                              data-date-format="MMMM DD, YYYY">
+                            <input tabindex="11" class="form-control" 
+                                id="lease_date" name="lease_date" 
+                                type="text"
+                                value="{{ form.date.value|date:'F d, Y'}}" />
+                            <span class="input-group-addon">
+                                <span class="fa fa-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default active" 
+                                id=exprd tabindex="12">
+                            Expired Leases 
+                        </button>
+                        <button type="button" class="btn btn-default" 
+                            id=vos tabindex="13">
+                            Village of Schaumburg 
+                        </button>
+                        <button type="button" class="btn btn-default" 
+                            id=fha tabindex="14">
+                            FHA Certification
+                        </button>
+                    </div>
+                    </div>
+                        
+                    <div class="col-sm-2">
+                        <button tabindex="15" type="submit"
+                                class="btn btn-block btn-success" 
+                                title="Get Lease Report"
+                                id="get_l_report">
+                                   Get Report 
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="lease-progress" style="display:none">
+                {% include "accounting/report_progress_bar.html" %}
+            </div>
+
+            {% if reports.expired_lease %}
+                {% include "accounting/report_list.html" with report_name='Expired Lease' report_type="expired_lease" %}
+            {% endif %}
+
+            {% if reports.vos_lease %}
+                {% include "accounting/report_list.html" with report_name='VOS Lease' report_type="vos_lease" %}
+            {% endif %}
+
+            {% if reports.fha_lease %}
+                {% include "accounting/report_list.html" with report_name='FHA Lease' report_type="fha_lease" %}
+            {% endif %}
+        </div>
+    </div>
+</div>

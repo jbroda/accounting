@@ -1,0 +1,81 @@
+{% load extras %}
+
+<form id="tenant_form" enctype="multipart/form-data" class="form-horizontal" role="form" action="" method="post">
+    {% csrf_token %}
+    {% for hidden in lease_form.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
+    {% for f in lease_form.visible_fields %}
+        <div class="form-group" {% if f.name == "account" %} style="display:none" {% endif %}>
+            <label class="col-sm-2 control-label" for="{{ f.id_for_label }}">
+                {{ f.label }}
+            </label>
+            <div class="col-sm-6">
+                {{ f.errors }}
+                {{ f|addcss:"form-control" }}
+                {{ f.help_text }}
+            </div>
+        </div>
+    {% endfor %}
+
+    {% if False %}
+    {{ lease_formset.management_form }}
+    {% for form in lease_formset %}
+        <div class="tenant_container">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                   Tenant: {{ form.instance }} 
+                </div>
+                <div class="panel-body">
+                    {% for hidden in form.hidden_fields %}
+                        {{ hidden }}
+                    {% endfor %}
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label" 
+                               title="Select an existing tenant or enter new tenant info below"
+                               id="existing_tenant_id_label"
+                               for="existing_tenant_id">
+                            <i>Existing tenant:</i>
+                        </label>
+
+                        <div class="col-sm-6">
+                            <select class="form-control" 
+                                    title="Select an existing tenant or enter new tenant info below"
+                                    data-toggle="tooltip"
+                                    placeholder="Select an existing tenant"
+                                    id="existing_tenant_id" 
+                                    name="existing_tenant_id">
+                                <option value=0 default selected>----------------------------</option>
+                                {% for tenant in tenants %}
+                                <option value={{tenant.id}}>{{ tenant }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    {% for f in form.visible_fields %}
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label" for="{{ f.id_for_label }}">
+                                {{ f.label }}
+                            </label>
+                            <div class="col-sm-6">
+                                {{ f.errors }}
+                                {{ f|addcss:"form-control" }}
+                                {{ f.help_text }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    {% endif %}
+
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <input class="btn btn-success" type="submit" name="add_lease" value="Update Lease" />
+            <a class="btn btn-danger" href="javascript:history.back()">Cancel</a>
+        </div>
+    </div>
+</form>

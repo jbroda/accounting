@@ -1,0 +1,111 @@
+<div id="transactionPanel" class="panel panel-default">
+
+    <a class="report-anchor" id="transaction"></a>
+
+    <div class="panel-heading">
+        <a class="panel-title" data-toggle="collapse" href="#transaction_panel">
+           Transaction Report 
+        </a>
+    </div>
+
+    <div id="transaction_panel" class="panel-collapse collapse">
+        <div class="panel-body">
+            <p>This report generates transaction history in the specified 
+            specified date range. For a daily report, specify the
+            current date in both from and to date fields.</p>
+            <small>
+                <ul>
+                    <li> Select the type of transactions
+                    <li> Enter the start date for transaction history
+                    <li> Enter the end date for transaction history
+                    <li> Press "Get Report"
+                </ul>    
+            </small>
+
+            <form name="transaction-report-form" id="transaction-report-form" 
+                    class="form-horizontal" role="form">
+                {% csrf_token %} 
+                {% if form.errors %}
+                <div class="panel panel-default">
+                    <div class="panel-body"> {{ form.errors }}
+                    </div>
+                </div> 
+                {% endif %}
+
+                <div class="form-group">
+                    <div class="col-sm-3">
+                        <div class="btn-group">
+                            <button type="button" 
+                                    class="btn btn-default"
+                                    id=credits tabindex="1">
+                              Credits 
+                            </button>
+                            <button type="button" class="btn btn-default"
+                                    id=charges tabindex="2">
+                              Charges 
+                            </button>
+                            <button type="button" class="btn btn-default active"
+                                id=alltransactions tabindex="3">
+                              All 
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-7">
+                    <label for="transaction_bdate" 
+                           class="col-sm-1 control-label">
+                                From</label>
+
+                    <div class="col-sm-5">
+                        <div class="input-group date" id="dtpicker_trans_start"
+                              data-date-format="MMMM DD, YYYY">
+                            <input tabindex="4" class="form-control" 
+                                id="transaction_bdate" name="transaction_bdate" 
+                                type="text"
+                                value="{{ form.date.value|date:'F d, Y'}}" />
+                            <span class="input-group-addon">
+                                <span class="fa fa-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <label for="transaction_edate" 
+                           class="col-sm-1 control-label">
+                                To</label>
+                    <div class="col-sm-5">
+                        <div class="input-group date" id="dtpicker_trans_end"
+                              data-date-format="MMMM DD, YYYY">
+                            <input tabindex="5" class="form-control" 
+                                id="transaction_edate" name="transaction_edate" 
+                                type="text"
+                                value="{{ form.date.value|date:'F d, Y'}}" />
+                            <span class="input-group-addon">
+                                <span class="fa fa-calendar"></span>
+                            </span>
+                        </div>
+                    </div>
+                    </div>
+
+
+                    <div class="col-sm-2">
+                        <button tabindex="6" type="submit"
+                                class="btn btn-block btn-success" 
+                                title="Get Transaction Report"
+                                id="get_t_report">
+                                   Get Report 
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="transaction-progress" style="display:none">
+                {% include "accounting/report_progress_bar.html" %}
+            </div>
+
+            {% if reports.transaction %}
+                {% include "accounting/report_list.html" with report_name="Transaction" report_type="transaction" %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+

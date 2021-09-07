@@ -1,0 +1,525 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% load extras %}
+
+{% block title %} Account {{ account.acct_id }} {% endblock %}
+
+{% block page_title %}
+Account <a href="{% url 'accounts:detail' account.id %}">{{ account.acct_id }} 
+            <span style="font-size: 0.65em">/ {{ account.orig_id }}</span></a>
+{% endblock page_title %}
+
+{% block extra_css %}
+
+<link href="{% static 'css/dataTables.bootstrap.css' %}" rel="stylesheet">
+
+<style type="text/css">
+    .add-row {
+        padding-left:18px;
+        background:url({{ STATIC_URL }}images/add.png) no-repeat left center;
+    }
+    .delete-row {
+        display:block;
+        margin:6px 0 0 0;
+        padding-left:18px;
+        background:url({{ STATIC_URL }}images/delete.png) no-repeat left center;
+    }
+    .dynamic-form { padding: 5px 15px; }
+    .tenant0 { background-color: #f9f9f9; }
+    .tenant1 { background-color: #f3f3f3; }
+    .tenant2 { background-color: #f0f0f0; }
+    .tenant3 { background-color: #d9d9d9; }
+    .tenant4 { background-color: #d3d3d3; }
+    .tenant5 { background-color: #d0d0d0; }
+</style>
+
+{% endblock extra_css %}
+
+{% block content %}
+
+<div class="panel panel-default">
+    <div class="panel-body">
+        <form id="account_form" class="form-inline" role="form" action="" method="post">
+            {% csrf_token %}
+            <div class="col-sm-6">
+                <div class="col-sm-4"><strong>{{ form.unit_address.label }}</strong></div>
+                <div class="col-sm-8">{{ form.unit_address.value }}</div>
+            </div>
+            <div class="col-sm-6">
+                <div class="col-sm-4"><strong>{{ form.unit_number.label }}</strong></div>
+                <div class="col-sm-2">{{ form.unit_number.value }}</div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="panel-group" id="infoPanel">
+
+    <!-- #region Owner Info -->
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <a class="panel-title" data-toggle="collapse" data-parent="#infoPanel" href="#owners">
+                Owners
+            </a>
+        </div>
+
+        <div id="owners" class="panel-collapse collapse">
+            <div class="panel-body">
+                
+                <ul id="ownerTab" class="nav nav-tabs">
+                    {% for owner in account.owner_set.all %}
+                    <li><a href="#owner{{forloop.counter}}"><b>{{ owner.last_name }}, {{ owner.first_name }} {{ owner.middle_name }}</b></a></li>
+                    {% endfor %}
+                    {% if user.is_staff %}
+                    <li><a href="#owner_add"><span title="Add Owner" class="glyphicon glyphicon-plus"></span></a></li>
+                    {% endif %}
+                </ul>
+                
+                <div id="ownerTabContent" class="tab-content">
+                    {% for owner in account.owner_set.all %}
+                    <div class="tab-pane" id="owner{{forloop.counter}}">
+                    
+                        <table class="table table-bordered table-condensed table-striped dataTable">
+                           <tbody>
+                                <tr>
+                                    <td><b>Home Phone</b></td>
+                                    <td><a href="tel:{{owner.home_phone}}">{{ owner.home_phone }}</a></td>
+                                </tr>
+                                <tr>
+                                    <td><b>Cell Phone</b></td>
+                                    <td><a href="tel:{{owner.cell_phone}}">{{ owner.cell_phone }}</a></td>
+                                </tr>
+                                <tr>
+                                    <td><b>E-mail</b></td>
+                                    <td><a href="mailto:{{owner.email}}">{{ owner.email }}</a></td>
+                                </tr>
+                                <tr>
+                                    <td><b>Address</b></td>
+                                    <td>{{ owner.address }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>City</b></td>
+                                    <td>{{ owner.city }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>State & Zip</b></td>
+                                    <td>{{ owner.state }} {{owner.zip }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Accounts</b>
+                                    <td>
+                                        {% for account in owner.account.all %}
+                                        <a href="{% url 'accounts:detail' account.id  %}">
+                                            {{ account.acct_id }}</a>{% if not forloop.last %}, {% endif %}
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        {% if user.is_staff %}
+                            <a class="btn btn-primary" href="{% url 'accounts:owner_update' owner.id account.id %}">Edit Owner</a>
+                            <a class="btn btn-warning" href="{% url 'accounts:owner_delete' owner.id account.id %}">Delete Owner from Account</a>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                    {% if user.is_staff %}
+                    <div class="tab-pane" id="owner_add">
+                        &nbsp;
+                        <form id="owner_form" class="form-horizontal owner0" role="form" action="" method="post">
+                            {% csrf_token %}
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" 
+                                       title="Select an existing owner or enter new owner info below"
+                                       id="existing_owner_id_label"
+                                       for="existing_owner_id">
+                                    <i>Existing owner:</i>
+                                </label>
+
+                                <div class="col-sm-6">
+                                    <select class="form-control" 
+                                            title="Select an existing owner or enter new owner info below"
+                                            data-toggle="tooltip"
+                                            placeholder="Select an existing owner"
+                                            id="existing_owner_id" 
+                                            name="existing_owner_id">
+                                        <option value=0 default selected>----------------------------</option>
+                                        {% for owner in owners %}
+                                        <option value={{owner.id}}>{{ owner }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            {% for f in owner_form %}
+                                <div class="form-group" {% if f.name == "account" %} style="display:none" {% endif %}>
+                                    <label class="col-sm-2 control-label" for="{{ f.id_for_label }}">
+                                        {{ f.label }}
+                                    </label>
+                                    <div class="col-sm-6">
+                                        {{ f.errors }}
+                                        {{ f|addcss:"form-control" }}
+                                        {{ f.help_text }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <input class="btn btn-primary" type="submit" name="add_owner" value="Add Owner" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    {% endif %} <!-- if is_superuser -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #endregion -->
+    
+    <!-- #region Lease Info -->
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <a class="panel-title" data-toggle="collapse" data-parent="#infoPanel" href="#lease">
+                Lease
+            </a>
+        </div>
+
+        <div id="lease" class="panel-collapse collapse">
+            <div class="panel-body">
+                
+                <ul id="leaseTab" class="nav nav-tabs">
+                    {% if account.lease %}
+                    <li><a href="#lease1"><b>{{ account.lease }}</b></a></li>
+                    {% else %}
+                        {% if user.is_staff %}
+                        <li><a href="#lease_add"><span title="Add Lease" class="glyphicon glyphicon-plus"></span></a></li>
+                        {% endif %}
+                    {% endif %}
+                </ul>
+                
+                <div id="leaseTabContent" class="tab-content">
+                    {% if account.lease %}
+
+                    <div class="tab-pane" id="lease1">
+                        <table class="table table-bordered table-condensed table-striped dataTable">
+                            <tbody>
+                                <tr>
+                                    <td><b>Start Date</b></td>
+                                    <td>{{ account.lease.start_date }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>End Date</b></td>
+                                    <td>{{ account.lease.end_date }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Monthly Rent</b></td>
+                                    <td>{{ account.lease.monthly_rent }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Lease File</b></td>
+                                    <td>
+                                        {% if account.lease.lease_file %}
+                                        <a href="{{ account.lease.lease_file.url }}">
+                                            {{ account.lease.lease_file }}</a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% if user.is_staff %}
+                                <tr>
+                                    <td colspan="2">
+                                        <a class="btn btn-primary" href="{% url 'accounts:lease_update' account.lease.id account.id %}">Edit Lease</a>
+                                        <a class="btn btn-warning" href="{% url 'accounts:lease_delete' account.lease.id account.id %}">Delete Lease</a>
+                                    </td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    
+                        <div class="tenant_container">
+                          <div class="panel panel-default">
+                            <div class="panel-heading">
+                                Tenants
+                            </div>
+                            <div>
+                                <div class="panel-body">
+                                    <ul id="tenantTab" class="nav nav-tabs">
+                                        {% for tenant in account.lease.tenant_set.all %}
+                                        <li><a href="#tenant{{forloop.counter}}"><b>{{ tenant.last_name }}, {{ tenant.first_name }} {{ tenant.middle_name }}</b></a></li>
+                                        {% endfor %}
+                                        {% if user.is_staff %}
+                                        <li><a href="#tenant_add"><span title="Add Tenant" class="glyphicon glyphicon-plus"></span></a></li>
+                                        {% endif %}
+                                    </ul>
+
+                                    <div id="tenantTabContent" class="tab-content">
+                                        {% for tenant in account.lease.tenant_set.all %}
+                        
+                                        <div class="tab-pane" id="tenant{{forloop.counter}}">
+                                        
+                                            <table class="table table-bordered table-condensed table-striped dataTable">
+                                                <tbody>
+                                                    <tr>
+                                                        <td><b>Home Phone</b></td>
+                                                        <td><a href="tel:{{tenant.home_phone}}">{{ tenant.home_phone }}</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><b>Cell Phone</b></td>
+                                                        <td><a href="tel:{{tenant.cell_phone}}">{{ tenant.cell_phone }}</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><b>E-mail</b></td>
+                                                        <td><a href="mailto:{{tenant.email}}">{{ tenant.email }}</a></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><b>Is a Relative of the Owner?</b></td>
+                                                        <td>{{ tenant.is_owners_relative }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
+                                            {% if user.is_staff %}
+                                            <a class="btn btn-primary" href="{% url 'accounts:tenant_update' tenant.id account.id %}">Edit Tenant</a>
+                                            <a class="btn btn-warning" href="{% url 'accounts:tenant_remove' tenant.id account.id %}">Remove Tenant from Lease</a>
+                                            {% endif %}
+                                        </div>
+                                        {% endfor %}
+
+                                        {% if user.is_staff %}
+                                        <div class="tab-pane" id="tenant_add">
+                                            &nbsp;
+                                            <form id="tenant_form" enctype="multipart/form-data" class="form-horizontal tenant0" 
+                                                  role="form" action="" method="post">
+                                                {% csrf_token %}
+
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label" 
+                                                           title="Select an existing tenant or enter new tenant info below"
+                                                           id="existing_tenant_id_label"
+                                                           for="existing_tenant_id">
+                                                        <i>Existing tenant:</i>
+                                                    </label>
+
+                                                    <div class="col-sm-6">
+                                                        <select class="form-control" 
+                                                                title="Select an existing tenant or enter new tenant info below"
+                                                                data-toggle="tooltip"
+                                                                placeholder="Select an existing tenant"
+                                                                id="existing_tenant_id" 
+                                                                name="existing_tenant_id">
+                                                            <option value=0 default selected>----------------------------</option>
+                                                            {% for tenant in tenants %}
+                                                            <option value={{tenant.id}}>{{ tenant }}</option>
+                                                            {% endfor %}
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                {% for f in tenant_form %}
+                                                <div class="form-group" {% if f.name == "lease" %} style="display:none" {% endif %}>
+                                                    <label class="col-sm-2 control-label" for="{{ f.id_for_label }}">
+                                                        {{ f.label }}
+                                                    </label>
+                                                    <div class="col-sm-6">
+                                                        {{ f.errors }}
+                                                        {{ f|addcss:"form-control" }}
+                                                        {{ f.help_text }}
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                                                <div class="form-group">
+                                                    <div class="col-sm-offset-2 col-sm-10">
+                                                        <input class="btn btn-primary" type="submit" name="add_tenant" value="Add Tenant" />
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        {% endif %} <!-- if is_superuser -->
+
+                                    </div>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+
+                    </div>
+
+                    {% else %}
+                        {% if user.is_staff %}
+                            <div class="tab-pane" id="lease_add">
+                                &nbsp;
+                                {% include "accounting/lease_tenant_form.html" %}
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- #endregion -->
+    
+    <!-- #region Vehicle Info -->
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <a class="panel-title" data-toggle="collapse" data-parent="#infoPanel" href="#vehicles">
+                Vehicles
+            </a>
+        </div>
+
+        <div id="vehicles" class="panel-collapse collapse">
+            <div class="panel-body">
+                
+                <ul id="vehicleTab" class="nav nav-tabs">
+                    {% for vehicle in account.vehicle_set.all %}
+                    <li><a href="#vehicle{{forloop.counter}}"><b>{{ vehicle.year_make_and_model}}</b></a></li>
+                    {% endfor %}
+                    {% if user.is_staff %}
+                    <li><a href="#vehicle_add"><span title="Add Vehicle" class="glyphicon glyphicon-plus"></span></a></li>
+                    {% endif %}
+                </ul>
+                
+                <div id="vehicleTabContent" class="tab-content">
+                    {% for vehicle in account.vehicle_set.all %}
+                    <div class="tab-pane" id="vehicle{{forloop.counter}}">
+                    
+                        <table class="table table-bordered table-condensed table-striped dataTable">
+                           <tbody>
+                                <tr>
+                                    <td><b>License Plate</b></td>
+                                    <td>{{ vehicle.license_plate }}</td>
+                                </tr>
+                                <tr>
+                                    <td><b>Color</b></td>
+                                    <td>{{ vehicle.color }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        {% if user.is_staff %}
+                        <a class="btn btn-primary" href="{% url 'accounts:vehicle_update' vehicle.id account.id %}">Edit Vehicle</a>
+                        <a class="btn btn-warning" href="{% url 'accounts:vehicle_remove' vehicle.id account.id %}">Remove Vehicle from Account</a>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                    {% if user.is_staff %}
+                    <div class="tab-pane" id="vehicle_add">
+                        &nbsp;
+                        <form id="vehicle_form" class="form-horizontal vehicle0" role="form" action="" method="post">
+                            {% csrf_token %}
+
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label" 
+                                       title="Select an existing vehicle or enter new vehicle info below"
+                                       id="existing_vehicle_id_label"
+                                       for="existing_vehicle_id">
+                                    <i>Existing vehicle:</i>
+                                </label>
+
+                                <div class="col-sm-6">
+                                    <select class="form-control" 
+                                            title="Select an existing vehicle or enter new vehicle info below"
+                                            data-toggle="tooltip"
+                                            placeholder="Select an existing vehicle"
+                                            id="existing_vehicle_id" 
+                                            name="existing_vehicle_id">
+                                        <option value=0 default selected>----------------------------</option>
+                                        {% for vehicle in vehicles %}
+                                        <option value={{vehicle.id}}>{{ vehicle }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            {% for f in vehicle_form %}
+                                <div class="form-group" {% if f.name == "account" %} style="display:none" {% endif %}>
+                                    <label class="col-sm-2 control-label" for="{{ f.id_for_label }}">
+                                        {{ f.label }}
+                                    </label>
+                                    <div class="col-sm-6">
+                                        {{ f.errors }}
+                                        {{ f|addcss:"form-control" }}
+                                        {{ f.help_text }}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                            <div class="form-group">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <input class="btn btn-primary" type="submit" name="add_vehicle" value="Add Vehicle" />
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    {% endif %} <!-- is_superuser -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- #endregion -->
+    
+</div>
+
+{% endblock content %}
+
+{% block extra_js %}
+
+{% if debug %}
+    <script src="{% static 'js/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'js/jquery.formset.js' %}"></script>
+    <script src="{% static 'js/accounts/csrf.js' %}"></script>
+    <script src="{% static 'js/accounts/account_form.js' %}"></script>
+{% else %}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/datatables/1.10.5/js/jquery.dataTables.min.js"></script>
+    <script src="{% static 'js/jquery.formset.min.js' %}"></script>
+    <script src="{% static 'js/accounts/csrf.min.js' %}"></script>
+    <script src="{% static 'js/accounts/account_form.min.js' %}"></script>
+{% endif %}
+
+<script type="text/javascript">
+
+    {% if not account.lease and lease_formset and lease_formset.prefix %}
+    $(".tenant_container").formset( {
+             prefix: '{{ lease_formset.prefix }}',
+             addText: 'Add Tenant Form',
+             deleteText: 'Remove Tenant Form',
+             added: OnTenantFormAdded,
+             removed: OnTenantFormRemoved,
+             extraClasses: ['tenant0', 'tenant1', 'tenant2', 'tenant3', 'tenant4', 'tenant5']
+        }
+    );
+    {% endif %}
+
+    {% with 'Owner Tenant Vehicle' as objects %}
+    {% for obj in objects.split %}
+        {% cycle owner_form tenant_form vehicle_form as obj_form silent %}
+
+        function clear{{obj}}Form(formSel) {
+            // Clear all fields in the {{obj}} form (except for account).
+            {% for f in obj_form %}
+                {% if f.name != "account" and f.name != "lease" %}
+                    $(formSel + "[id$='" + "{{f.name}}" + "']").val("");
+                {% endif %}
+            {% endfor %}
+        }
+
+        function make{{obj}}FormReadOnly(formSel, bReadOnly) {
+            // Make all fields in the {{obj}} form "read-only".
+            {% for f in obj_form %}
+                {% if f.name != "account" and f.name != "lease" %}
+                    $(formSel + "[id$='" + "{{f.name}}" + "']").attr("readonly", bReadOnly);
+                {% endif %}
+            {% endfor %}
+        }
+    {% endfor %}
+    {% endwith %}
+
+</script>
+
+{% endblock extra_js %}

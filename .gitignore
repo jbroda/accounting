@@ -1,0 +1,69 @@
+# Visual Studio files
+*.suo
+*.ccexclude
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# C extensions
+*.so
+
+# Distribution / packaging
+obj/
+build/
+develop-eggs/
+dist/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+site-packages/
+*.egg-info/
+.installed.cfg
+*.egg*
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Editor temp files:
+*.swp
+*~
+
+# Translations
+*.mo
+
+# Sphinx docs:
+build
+docs/_build
+
+# SQLite3 database files:
+#*.db
+
+# Logs:
+*.log
+*.pot
+
+# Virtual Environment
+venv
+venvh
+venvw
+
+# Static files
+#static
+.elasticbeanstalk/
+/project/assets/admin
+/project/assets/css
+/project/assets/debug_toolbar
+/project/assets/fonts
+/project/assets/images
+/project/assets/js
+/project/assets/less
+/project/assets/scss
+/project/assets/swf
+/bin/Microsoft.PythonTools.WebRole.dll
+/.vs/HiddenPond/config/applicationhost.config
+/.vs/config/applicationhost.config

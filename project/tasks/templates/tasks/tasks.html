@@ -1,0 +1,552 @@
+{% extends "base.html" %} 
+ 
+{% block body %}
+ 
+{% ifequal task_status "open" %}
+ <!--  <h4>Open Tasks </h4> -->
+{% endifequal %}
+
+{% ifequal task_status "completed" %}
+ <!-- <h4>Completed Tasks</h4> -->
+ 
+ <hr style="height:15px; visibility:hidden; margin: 0px" />
+ 
+ <!-- Apply date range to the completed tasks -->
+ <form name="date_range" 
+       id="date_range" 
+       class="date_range" 
+       onSubmit="onDateRangeSubmitted()"
+       action="view_completed_tasks"
+       method="post">
+    Completed Start Date: 
+    <input type="date" name="start_date" id="start_date" value={{ start_date }}>
+    &nbsp;
+    End Date: 
+    <input type="date" name="end_date" id="end_date" value={{ end_date }}>
+    &nbsp;
+    <input type="submit" name="ApplyDateRange" id="ApplyDateRange" value="Apply">
+ </form>
+ 
+{% endifequal %}
+
+<div id="task-table-div">
+<!-- task table -->
+ <table id="task-table" class="tablesorter tablesorter-blue">
+  <thead>
+   <tr>
+    <th>Date/Time</th> 
+    <th>Submitter</th> 
+    <th>Description</th>
+    <th>Priority</th>
+   
+{% ifequal task_status "open" %}
+    <th>Mark as Completed</th>
+{% endifequal %}
+   
+{% ifequal task_status "completed" %}
+    <th>Completed On</th>
+    <th>Hours Spent</th>
+    <th>Completed By</th>
+    <th>Comments</th>
+{% endifequal %}
+   
+  </tr>
+ </thead> 
+ 
+ <tbody>
+{% for task in tasks %}
+    <tr>
+      <td>{{ task.date           }}</td>      
+      <td>{{ task.creator        }}</td>
+    {% ifequal task_status "open" %}
+      <td id="taskIdDesc{{task.id}}" onclick="onEditDesc({{task.id}});">
+    {% else %}        
+      <td>
+    {% endifequal %}
+          {% autoescape off %}{{ task.description }}{% endautoescape %}
+      </td>
+
+    {% ifequal task_status "open" %}
+      <td id="taskIdPrio{{task.id}}" onClick="onEditPrio({{task.id}});">
+    {% else %}        
+      <td>
+    {% endifequal %}
+          {{ task.priority    }}
+      </td>
+      
+    {% ifequal task_status "open" %}
+      <td>
+        <input type="button" value="Complete" onclick="onMarkComplete({{ task.id }});"/>
+      </td>
+    {% endifequal %}
+      
+    {% ifequal task_status "completed" %}
+      <td>{{ task.completed_date }}</td>
+      <td>{{ task.hours_spent    }}</td>
+      <td>{{ task.completed_by   }}</td>
+      <td>{{ task.comments       }}</td>
+    {% endifequal %}
+    </tr>
+{% endfor %}
+  </tbody>
+ </table>
+</div>
+
+<div style="display:none" id="dialog-task-complete" title="Mark task as completed">
+  <p class="validateTips">Please fill the fields below</p>
+  <form>
+   <table>
+     <tr>
+      <td>
+       <label for="hours">Hours spent:</label>
+      </td>
+      <td>
+       <input type="text" 
+              name="hours" 
+              id="hours" 
+              class="text ui-widget-content ui-corner-all" />
+      </td>
+     </tr>
+     <tr>
+      <td>
+       <label for="comments">Comments:</label>
+      </td>
+      <td>
+       <textarea name="comments" 
+                 id="comments" 
+                 class="text ui-widget-content ui-corner-all" 
+                 rows=3 
+                 cols=45>
+       </textarea>
+      </td>
+     </tr>
+   </table>
+  </form>
+</div>
+
+<div style="display:none" id="dialog-edit-desc" title="Edit description">
+ <p class="validateTips">Please edit the description below</p>
+  <form>
+   <table>
+    <tr>
+     <td>
+      <label for="new_description">Description:</label>
+     </td>
+     <td>
+      <textarea name="new_description" 
+                id="new_description" 
+                class="text ui-widget-content ui-corner-all" 
+                rows=12 
+                cols=60>
+      </textarea>
+    </td>
+   </tr>
+  </table>
+ </form>
+</div>
+
+<div style="display:none" id="dialog-change-prio" title="Change priority">
+ <p class="validateTips">Please change the priority below</p>
+  <form>
+   <table>
+    <tr>
+  	 <td>
+       <label for="new_priority">Priority:</label>
+     </td>
+     <td name="priority-td" id="priority-td">
+      <input type="radio" name="new_priority" id="emerg"  value="1: emergency" required>emergency<br>
+      <input type="radio" name="new_priority" id="high"   value="2: 24 hours">24 hours<br>
+      <input type="radio" name="new_priority" id="medium" value="3: 48 hours">48 hours<br>
+      <input type="radio" name="new_priority" id="low"    value="4: low">low<br>
+     </td>
+    </tr>
+  </table>
+ </form>
+</div>
+
+<div style="display:none" id="dialog-modal" title="Please wait ...">
+    <p id="dialog-modal-msg">Updating ...</p>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+
+$(document).ready(function() 
+{
+    $("#task-table").tablesorter({
+                        theme:'blue',
+            {% ifequal task_status "open" %}
+                        sortList:[[3,0]],
+            {% else %}        
+                        sortList:[[4,1]],
+            {% endifequal %}        
+                         widgets:['zebra']});
+});
+
+{% ifequal task_status "completed" %}
+
+function onDateRangeSubmitted()
+{
+    console.log("onDateRangeSubmitted() called");
+    $("#task-table-div").html("<p>Applying date range ...</p>");
+}
+
+{% endifequal %}
+
+{% ifequal task_status "open" %}
+
+function onMarkComplete(taskId)
+{
+    console.log("onMarkComplete(task:" + taskId + ") called!");
+
+    var data = $("#dialog-task-complete").data;
+    data.taskId = taskId;
+    $("#dialog-task-complete").dialog("open");
+}
+
+function onEditDesc(taskId)
+{
+    console.log("onEditDesc(task:" + taskId + ") called!");
+
+    var descSelector = "#taskIdDesc" + taskId;
+    var description = $(descSelector);
+
+    var data = $("#dialog-edit-desc").data;
+    data.taskId = taskId;
+    data.taskDescription = $.trim(description.text());
+    $("#dialog-edit-desc").dialog("open");
+}
+
+function onEditPrio(taskId)
+{
+    console.log("onEditPrio(task:" + taskId + ") called!");
+
+    var prioSelector = "#taskIdPrio" + taskId;
+    var priority = $(prioSelector);
+
+    var data = $("#dialog-change-prio").data;
+    data.taskId = taskId;
+    data.taskPriority = priority.text();
+    $("#dialog-change-prio").dialog("open");
+}
+
+$(function () {
+    tips = $(".validateTips");
+
+    function updateTips( t ) 
+    {
+        tips
+       .text( t )
+       .addClass( "ui-state-highlight" );
+        
+       setTimeout(function() {
+          tips.removeClass( "ui-state-highlight", 1500 );
+       }, 500 );
+    }
+
+    function checkLength( o, n, min, max ) 
+    {
+       if ( o.val().length > max || o.val().length < min ) 
+       {
+          o.addClass("ui-state-error");
+          updateTips("Length of " + n + " must be between " + 
+                     min + " and " + max + ".");
+          return false;
+       } 
+       else 
+       {
+          return true;
+       }
+    }
+
+    function checkNotEmpty(o)
+    {
+        if (o.val().length == 0)
+        {
+            o.addClass( "ui-state-error" );
+            updateTips("Please do not leave it empty!");
+            return false;
+        }
+        else
+        {
+            return true;
+        } 
+    }
+
+    function checkRegexp( o, regexp, n ) 
+    {
+       if (!( regexp.test(o.val()))) 
+       {
+          o.addClass( "ui-state-error" );
+          updateTips( n );
+          return false;
+       } 
+       else 
+       {
+          return true;
+       }
+    }
+
+    //
+    // Complete task dialog.
+    //
+    var hours = $("#hours");
+    var comments = $("#comments");
+    var completeFields = $([]).add(hours).add(comments);
+
+    $("#dialog-task-complete").dialog(
+    {
+        open: function(event, ui) 
+        {
+            console.log("complete dialog opened!");
+            updateTips("Please fill the fields below");
+        },
+        autoOpen: false,
+        height: 350,
+        width: 580,
+        modal: true,
+        buttons: 
+        {
+           "Mark as completed": function() 
+           {
+                var bValid = true;
+                completeFields.removeClass( );
+                bValid = bValid && checkRegexp(hours, /^([0-9])+\.?([0-9])*$/, "Please enter a valid number");
+                if (bValid) 
+                {
+                    var taskId = $(this).data.taskId;
+
+                    $("#task-table-div").html("<h3>Completing task #" + taskId + "...</h3>");
+                        
+                    console.log("Completing task #" + taskId + 
+                                ", hours spent: " + hours.val());
+                                
+                    var request = $.ajax({
+                        type: "POST", 
+                        url: "mark_complete",
+                        data: { taskId: taskId, taskHours: hours.val(), taskComments: comments.val() },
+                              dataType: "html"
+                        });
+            
+                    request.done(function(msg) {
+                        console.log("success: " + msg);
+                        $("#task-table-div").html(msg);
+                       window.location.href="/view_open_tasks";
+                    });
+    
+                    request.fail(function(jqXHR, textStatus) {
+                        console.log("failure: " + textStatus);
+                        alert("Request failed: " + textStatus);
+                    });
+                     
+                    $(this).dialog("close");
+                }
+             },
+             Cancel: function() 
+             {
+                $(this).dialog("close");
+             }
+         },
+         close: function() 
+         {
+            completeFields.val("").removeClass();
+         }
+     });
+
+    //
+    // Edit description dialog
+    //
+    var new_description = $("#new_description");
+    var descFields = $([]).add(new_description);
+
+    $("#dialog-edit-desc").dialog(
+    {
+        open: function(event, ui) 
+        {
+            console.log("edit desc dialog opened!");
+            updateTips("Please edit the description below");
+
+            var taskDescription = $(this).data.taskDescription;
+            var new_description = $("#new_description");
+            new_description.val(taskDescription);
+            new_description.focus();
+        },
+        autoOpen: false,
+        height: 500,
+        width: 750,
+        modal: true,
+        buttons: 
+        {
+           "Save": function() 
+           {
+                var bValid = true;
+                descFields.removeClass( );
+                bValid = bValid & checkNotEmpty(new_description);
+                if (bValid) 
+                {
+                    var taskId = $(this).data.taskId;
+                    var taskNewDescription = $("#new_description").val(); //$(this).data.taskDescription;
+
+                    //$("#task-table-div").html("<h3>Updating description of task #" + taskId + "...</h3>");
+                    //var descSelector = "#taskIdDesc" + taskId;
+                    //$(descSelector).text("Updating description of task #" + taskId + "...");
+                        
+                    console.log("Updating description of task #" + taskId + "!");
+
+                    $("#dialog-modal-msg").text("Updating description ...");
+                    $("#dialog-modal").dialog("open");
+                                
+                    var request = $.ajax({
+                        type: "POST", 
+                        url: "edit_desc",
+                        data: { taskId: taskId, 
+                                taskDescription: taskNewDescription },
+                        dataType: "html",
+                        processData: true
+                        });
+            
+                    request.done(function(msg) {
+                        console.log("success: " + msg);
+                        //$("#task-table-div").html(msg);
+                        //window.location.href="/view_open_tasks";
+                        //var taskId = $(this).data.taskId;
+                        //var taskDescription = $(this).data.taskDescription;
+                        //var taskId          = this.data.match(/taskId=[0-9]+/)[0].split("=")[1]
+                        //var taskDescription = this.data.match(/taskDescription=.+/)[0].split("=")[1]
+                        //taskDescription = taskDescription.replace(/%0A/gi,"<br>")
+                        var descSelector = "#taskIdDesc" + taskId;
+                        $(descSelector).text(msg);
+                        $("#dialog-modal").dialog("close");
+                    });
+    
+                    request.fail(function(jqXHR, textStatus) {
+                        console.log("failure: " + textStatus);
+                        $("#dialog-modal").dialog("close");
+                        alert("Request failed: " + textStatus);
+                    });
+                     
+                    $(this).dialog("close");
+                }
+             },
+             Cancel: function() 
+             {
+                $(this).dialog("close");
+             }
+         },
+         close: function() 
+         {
+            descFields.val("").removeClass();
+         }
+     });
+
+    //
+    // Edit priority dialog
+    //
+    var new_priority = $("#new_priority");
+    var prioFields = $([]).add(new_priority);
+
+    $("#dialog-change-prio").dialog(
+    {
+        open: function(event, ui) 
+        {
+            console.log("change prio dialog opened!");
+            updateTips("Please change the priority below");
+            
+            var taskPriority = $(this).data.taskPriority;
+            var idx = taskPriority.match(/[0-9]/) - 1;
+            var new_priority = $("input:radio[name=new_priority]");
+            new_priority[idx].checked = true;
+            new_priority.focus();
+        },
+        autoOpen: false,
+        height: 310,
+        width: 340,
+        modal: true,
+        buttons: 
+        {
+           "Save": function() 
+           {
+                var bValid = true;
+                prioFields.removeClass( );
+                if (bValid) 
+                {
+                    var taskId = $(this).data.taskId;
+                    var taskNewPriority = $("input:radio[name=new_priority]:checked").val(); //$(this).data.taskPriority;
+
+                    //$("#task-table-div").html("<h3>Updating priority of task #" + taskId + "...</h3>");
+                    //var prioSelector = "#taskIdPrio" + taskId;
+                    //$(prioSelector).text("Updating priority of task #" + taskId + "!");
+                        
+                    console.log("Updating priority of task #" + taskId + "!");
+
+                    $("#dialog-modal-msg").text("Updating priority ...");
+                    $("#dialog-modal").dialog("open");
+
+                    var request = $.ajax({
+                        type: "POST", 
+                        url: "edit_prio",
+                        data: { taskId: taskId, 
+                                taskPriority: taskNewPriority },
+                        dataType: "html",
+                        processData: true
+                        });
+            
+                    request.done(function(msg) {
+                       console.log("success: " + msg);
+                       //$("#task-table-div").html(msg);
+                       //window.location.href="/view_open_tasks";
+                       var prioSelector = "#taskIdPrio" + taskId;
+                       $(prioSelector).text(msg);
+                       $("#dialog-modal").dialog("close");
+                    });
+    
+                    request.fail(function(jqXHR, textStatus) {
+                       console.log("failure: " + textStatus);
+                       $("#dialog-modal").dialog("close");
+                       alert("Request failed: " + textStatus);
+                    });
+                     
+                    $(this).dialog("close");
+                }
+             },
+             Cancel: function() 
+             {
+                $(this).dialog("close");
+             }
+         },
+         close: function() 
+         {
+            prioFields.val("").removeClass();
+         }
+    });
+
+    //
+    // Update dialog
+    // 
+    $("#dialog-modal").dialog(
+    {
+        autoOpen: false,
+        closeOnEscape: false,
+        dialogClass: 'no-close',
+        draggable: false,
+        height: 150,
+        width: 450,
+        modal: true,
+        resizable: false,
+        open: function(event, ui)
+        {
+            $("body").css("cursor", "wait");
+        },
+        close: function(event, ui)
+        {
+            $("body").css("cursor", "default");
+        }
+    });
+});
+
+{% endifequal %}
+
+</script>
+{% endblock %}

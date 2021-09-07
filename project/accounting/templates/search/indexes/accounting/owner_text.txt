@@ -1,0 +1,9 @@
+{{ object.last_name  }}
+{{ object.middle_name  }}
+{{ object.first_name }}
+{{ object.home_phone }}
+{{ object.cell_phone }}
+{{ object.address }}
+{{ object.city }}
+{{ object.state }}
+{{ object.zip }}

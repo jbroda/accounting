@@ -1,0 +1,166 @@
+<!DOCTYPE>
+<html>
+    <head>
+        <title>Account Audit Report</title>
+        <style type="text/css">
+            @page {
+                size: {{ pagesize|default:'letter portrait' }};
+                margin: 0.75in 1in 0.5in 1in
+                @frame header {
+                    -pdf-frame-content: headerContent;
+                    top: 0.25in;
+                    margin-left: 1in;
+                    margin-right: 1in;
+                    height: 48pt;
+                }
+                @frame footer {
+                    -pdf-frame-content: footerContent;
+                    bottom: 0.25in;
+                    margin-left: 1in;
+                    margin-right: 1in;
+                    height: 0.25in;
+                }     
+            }
+            @page cash_entries {
+                size: {{ pagesize|default:'letter portrait' }};
+                margin: 0.75in 1in 0.5in 1in
+                @frame header {
+                    -pdf-frame-content: headerContentCashEntries;
+                    top: 0.25in;
+                    margin-left: 1in;
+                    margin-right: 1in;
+                    height: 48pt;
+                }
+                @frame footer {
+                    -pdf-frame-content: footerContent;
+                    bottom: 0.25in;
+                    margin-left: 1in;
+                    margin-right: 1in;
+                    height: 0.25in;
+                }     
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="headerContent">
+            <table style="font-size=large; border-collapse: collapse;">
+                <tr style="border-bottom:1px solid #000;font-size=large;font-weight:bold">
+                    <td width=40%>Hidden Pond Condominium Association</td>
+                    <td width=23%>Account Audit Report</td>
+		    <td style=text-align:right width=37%>{{ report_start_date }} - {{ report_end_date }} </td>
+                </tr>
+            </table>
+            <p>
+            <table style="font-size=large;text-align:left;font-weight=bold">
+                <tr>
+                    <td width=20%>Account</td>
+                    <td width=16% style="text-align:right">Initial Balance</td>
+                    <td width=16% style="text-align:right">Charges</td>
+                    <td width=16% style="text-align:right">Credits</td>
+                    <td width=16% style="text-align:right">Ending Balance</td>
+                    <td width=16% style="text-align:right">Checksum</td>
+                </tr>
+            </table>
+        </div>
+        <div id="headerContentCashEntries">
+            <table style="font-size=large; border-collapse: collapse;">
+                <tr style="border-bottom:1px solid #000;font-size=large;font-weight:bold">
+                    <td width=40%>Hidden Pond Condominium Association</td>
+                    <td width=23%>Account Audit Report</td>
+		    <td style=text-align:right width=37%>{{ report_start_date }} - {{ report_end_date }} </td>
+                </tr>
+            </table>
+            <p>
+            <table style="font-size=large;text-align:left;font-weight=bold">
+                <tr>
+		<td width=04%></td>
+                <td width=16%>Timestamp</td>
+                <td width=09%>Date</td>
+                <td width=10%>Acct ID</td>
+                <td width=09%>User</td>
+                <td width=18%>Category</td>
+                <td width=24%>Memo</td>
+		<td width=10% style="text-align:right;">Amount</td>
+                </tr>
+            </table>
+        </div>
+        <div id="footerContent">
+            <table>
+                <tr>
+                    <td style="text-align: right">Page <pdf:pagenumber> of
+                         <pdf:pagecount> </td>
+                </tr>
+            </table>
+        </div>
+        <table>
+        {% load humanize %}
+        {% for acct in accounts%}
+            <tr> 
+            <td width=20%>{{ acct.account.orig_id }} / {{acct.account.acct_id}}</td> 
+            <td width=16% style="text-align:right; color:
+		    {% if acct.startBalance <= 0 %} green {% else %} red {% endif %}">
+                {{ acct.startBalance|floatformat:2|intcomma }}
+            </td>
+	    <td width=16% style="text-align:right;"> {{ acct.chargeTotal|floatformat:2|intcomma }} </td>
+	    <td width=16% style="text-align:right;"> {{ acct.creditTotal|floatformat:2|intcomma }} </td>
+            <td width=16% style="text-align:right; color:
+	    	{% if acct.startBalance <= 0 %} green {% else %} red {% endif %}">
+                {{ acct.endBalance|floatformat:2|intcomma }}
+            </td>
+	    <td width=16% style="text-align:right; color: {% if acct.checksum != 0 %} red {% else %} black {% endif %}">
+                {{ acct.checksum|floatformat:2|intcomma }}
+            </td>
+	    </tr>
+            {% for e in acct.pseudoEntries %}
+	    <tr>
+                <td width=36% style="padding-left:10px;">{{e.datetime|date:"m/d/Y"}}</td>
+		<td width=16% style="text-align:right;">{{e.amount}}</td>
+		<td width=48% colspan=4 style="padding-left:10px;">{{e.memo}}</td>
+	    </tr>
+	    {% endfor %}
+        {% endfor %}
+        </table>
+	<p>
+	<b>General Account: </b>{{general_account_adjustment|floatformat:2|intcomma }}
+        <table>
+        {% load humanize %}
+        {% for e in general_account_entries %}
+	    <tr>
+                <td width=36% style="padding-left:10px;">{{e.datetime|date:"m/d/Y"}}</td>
+		<td width=16% style="text-align:right;">{{ e.amount}}</td>
+		<td width=48% style="padding-left:10px;">{{e.memo}}</td>
+	    </tr>
+        {% endfor %}
+        </table>
+	<p>
+	<p><b>Initial Delinquency:</b> {{initial_delinquency|floatformat:2|intcomma }} &nbsp;&nbsp;&nbsp;&nbsp;
+	<b>Initial Overpayment:</b> {{initial_overpayment|floatformat:2|intcomma }}
+	<br><b>Ending Delinquency:</b> {{ending_delinquency|floatformat:2|intcomma }} &nbsp;&nbsp;&nbsp;&nbsp;
+	<b>Ending Overpayment:</b> {{ending_overpayment|floatformat:2|intcomma }}
+	<p><b>Charges:</b> {{charges_total|floatformat:2|intcomma }} &nbsp;&nbsp;&nbsp;&nbsp;
+	<b>Credits:</b> {{credit_total|floatformat:2|intcomma }} 
+	<p><b>Waived Income:</b> {{waived_income|floatformat:2|intcomma }}
+
+	<pdf:nexttemplate name="cash_entries" />
+    	<pdf:nextpage></pdf:nextpage>
+
+	<table>
+        {% for e in cash_audit_entries %}
+	    <tr>
+		<td width=04%>{{ forloop.counter }}</td>
+                <td width=16%>{{ e.timestamp|date:"m/d/Y H:i:s" }}</td>
+                <td width=09%>{{ e.datetime|date:"m/d/Y" }}</td>
+                <td width=10%>{{ e.account.acct_id }}</td>
+                <td width=09%>{{ e.user }}</td>
+                <td width=18%>{{ e.category.name }}</td>
+                <td width=24%>{{ e.memo }}</td>
+                <td width=10% style="text-align:right;">
+                    {{ e.amount|floatformat:2|intcomma }}
+                </td>
+	    </tr>
+        {% endfor %}
+	</table>
+	<p><b>Cash Audit Total:</b> {{cash_audit_total|floatformat:2|intcomma }}
+    </body>
+</html>

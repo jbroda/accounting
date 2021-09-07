@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+        <title>Hidden Pond Task Manager</title>
+
+        <meta name="viewport" content="width=device-width, maximum-scale=1">
+
+        <link href="/stylesheets/main.css" type="text/css" rel="stylesheet" />
+        <link href="/stylesheets/tablesorter/theme.blue.css" rel="stylesheet" />
+        <link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.0/themes/ui-lightness/jquery-ui.css" rel="stylesheet" type="text/css" />
+        <link href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" rel="stylesheet" />
+</head>
+
+<body>
+        <a href="/">
+                <img style="border-style:none; vertical-align:top" 
+                        src="/images/small_logo.png" 
+                        alt="Hidden Pond" width="38" height="25"></a>
+        <h3 style="display:inline;">Hidden Pond Task Manager</h3>
+                
+{% if user %}
+        <div style="float:right;">
+        Logged in as <span style="background-color: OldLace">{{ user.name }}</span> | 
+        <a href="/password">Password</a> | 
+        <a href="/logout">Logout</a>
+        </div>
+        
+        <hr style="height:5px; visibility:hidden; margin: 0px" />
+        
+        <form>
+          <div id="Tasks" style="display:none">
+            <input type="radio" id="create_task_radio"    name="Tasks" onclick="CreateTask();" />
+            <label for="create_task_radio">Create a Task</label>
+            <input type="radio" id="view_open_radio"      name="Tasks" onclick="ViewOpenTasks();" />
+            <label for="view_open_radio">View Open Tasks</label>
+            <input type="radio" id="view_completed_radio" name="Tasks" onclick="ViewCompletedTasks();"/>
+            <label for="view_completed_radio">View Completed Tasks</label>
+          </div>
+        </form>
+                        
+{% endif %}
+
+<div id="div-body" style="display:none">
+{% block body %} 
+{% endblock %}
+</div>
+
+<!-- Load the jQuery and jQuery UI libraries. -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+
+<!-- tablesorter -->
+<script src="/js/tablesorter/jquery.tablesorter.min.js"></script>
+
+<!-- jQuery validation plug-in -->
+<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.js"></script>
+
+<script>
+$(document).ready(function() 
+{
+	$("#Tasks").show();
+	$("#div-body").show();
+
+	if (!window.console) 
+		window.console = {};
+	
+	// union of Chrome, FF, IE, and Safari console methods
+	var m = [
+	    "log", "info", "warn", "error", "debug", "trace", "dir", "group",
+	    "groupCollapsed", "groupEnd", "time", "timeEnd", "profile", "profileEnd",
+		"dirxml", "assert", "count", "markTimeline", "timeStamp", "clear"
+	];
+	// define undefined methods as noops to prevent errors
+	for (var i = 0; i < m.length; i++) {
+	    if (!window.console[m[i]]) {
+    	  window.console[m[i]] = function() {};
+    	}    
+  	}
+		
+	$("#Tasks").buttonset();
+	var str = window.location.href;
+	var bCreateTask     = str.match(/create_task/);
+	var bOpenTasks      = str.match(/view_open_tasks/);
+	var bCompletedTasks = str.match(/view_completed_tasks/);
+	if (bCreateTask)
+		$("#create_task_radio").attr("checked","checked");
+	if (bOpenTasks)
+		$("#view_open_radio").attr("checked","checked");
+	if (bCompletedTasks)
+		$("#view_completed_radio").attr("checked","checked");
+	$("#Tasks").buttonset("refresh");
+});
+
+function CreateTask()
+{
+	console.log("CreateTask()");
+	$("#div-body").html("");
+	window.location.href="/create_task";
+}
+
+function ViewOpenTasks()
+{
+	console.log("ViewOpenTasks()");
+	$("#div-body").html("<p>Loading open tasks ...</p>");
+	window.location.href="/view_open_tasks";
+}
+
+function ViewCompletedTasks()
+{
+	console.log("ViewCompletedTasks()");
+	$("#div-body").html("<p>Loading completed tasks ...</p>");
+	window.location.href="/view_completed_tasks";
+}
+</script>
+
+{% block scripts %} 
+{% endblock %} 
+        
+</body>
+</html>

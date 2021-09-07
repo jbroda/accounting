@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+{% if failed %}
+
+<div style="color: red;">
+    <p><strong>Login failed!</strong> Check your credentials and try again.</p>
+ </div>
+
+{% endif %}
+
+<style>
+form.login-form {
+        border-top: 1px solid #8dbdd8;
+        border-bottom: 1px solid #8dbdd8;
+        background-color: #F0F0F6;
+        width: auto;
+        font-size: 1.0em;
+        color: #333;
+}
+
+form.login-form label.error, label.error {
+        color: red;
+        margin-left: 10px;
+        width: auto;
+        font-style: italic;
+        font-weight: bold;
+        display:inline
+}
+div.error { display: none; }
+</style>
+
+<h4>Login</h4>
+
+<form name="login-form" class="login-form" id="login-form" action= "/login" method="POST">
+<table border="0">
+  <tr>
+    <td>Username:</td> 
+    <td><input type="text" value="{{ username }}" name="username" id="username" size="30"></td>
+  </tr>
+   
+  <tr>
+    <td>Password:</td>
+    <td><input type="password" name="password" id="password" size="30"></td>
+  </tr>
+ </table>
+ <div class="error">
+ </div>
+ <p>
+   <input type="submit" value="Login" name="login" id="login">
+ </p>
+</form>
+
+<a href="/forgot">Forgot password</a>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // When the page loads.
+  $(document).ready(function() { 
+    // validate the login form on keyup and submit
+	$("#login-form").validate({
+        //errorLabelContainer:
+        //   $("#login-form div.error"),
+		rules: {
+			username: {
+				required: true,
+				minlength: 2
+			},
+			password: {
+				required: true,
+				minlength: 4
+			}
+		},
+		messages: {
+			username: {
+				required: "Please enter a username<br>",
+				minlength: "Your username must consist of at least 2 characters<br>"
+			},
+			password: {
+				required: "Please provide a password<br>",
+				minlength: "Your password must be at least 4 characters long<br>"
+			}
+		}
+	});
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,20 @@
+﻿<div class="panel panel-info" id="{{report_type}}_history">
+    <div class="panel-heading">
+        <h4 class="panel-title">
+            <a data-toggle="collapse" 
+               data-parent="#{{report_type}}_history" 
+               href="#{{report_type}}_reports">
+                Previous {{report_name}} Reports
+            </a>
+        </h4>
+    </div>
+    <div id="{{report_type}}_reports" class="panel-collapse collapse">
+        <div class="panel-body">
+            <ul id="{{report_type}}_report_list">
+                {% for report in reports %}
+                <li>{% include "accounting/report_link.html" %}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>

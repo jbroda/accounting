@@ -1,0 +1,56 @@
+﻿{% extends "base.html" %}
+
+{% load humanize staticfiles %}
+
+{% block title %}{{title}}{% endblock title %}
+
+{% block page_title %} {% endblock page_title %}
+
+{% block extra_css %}
+
+{% endblock extra_css %}
+
+{% block content %}
+
+<div class="alert alert-{{result|default_if_none:'info'}}">
+    <div class="alert alert-{{result|default_if_none:'info'}}">
+        {{message}}
+    </div>
+    {% if accounts %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            Late Accounts
+        </div>
+        <div class="panel-body">
+            <table class="table table-no-border table-condensed table-hover table-striped">
+                <thead>
+                    <tr>
+                        <th>Account</th>
+                        <th>Balance</th>
+                        <th>Owner</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for account in accounts %}
+                <tr>
+                    <td>
+                        <a href="{{account.get_absolute_url}}">{{account.acct_id}} / <span style="font-size: 0.65em;">{{account.orig_id}}</span></a>
+                    </td>
+                    <td>
+                        ${{account.balance|floatformat:2|intcomma}}
+                    </td>
+                    <td>
+                        {% with owner=account.owner_set.first %}
+                        <a href="{{owner.get_absolute_url}}">{{owner}}</a>
+                        {% endwith %}
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock content %}

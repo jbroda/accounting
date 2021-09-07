@@ -1,0 +1,6 @@
+{{ object.acct_id }}
+{{ object.orig_id }}
+{{ object.unit_address }}
+{{ object.unit_number }}
+{{ object.alt_acct_id1 }}
+{{ object.alt_acct_id2 }}

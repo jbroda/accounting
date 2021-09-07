@@ -1,0 +1,155 @@
+<!DOCTYPE>
+
+{% load humanize %}
+
+<html>
+    <head>
+        <title>{{report_type}} Income Report</title>
+        <style type="text/css">
+            @page {
+                size: {{ pagesize|default:'letter portrait' }};
+                margin: 1.5in 1in 0.5in 1in
+                @frame header {
+                    -pdf-frame-content: headerContent;
+                    top: 1in;
+                    margin-left: 1in;
+                    margin-right: 1in;
+                    height: 48pt;
+                }
+                @frame footer {
+                    -pdf-frame-content: footerContent;
+                    bottom: 0.25in;
+                    margin-left: 1in;
+                    margin-right: 1in;
+                    height: 0.25in;
+                }     
+            }
+            @page detail {
+                size: {{ pagesize|default:'letter portrait' }};
+                margin: 1.5in 1in 0.5in 1in
+                @frame header {
+                    -pdf-frame-content: detailHeaderContent;
+                    top: 1in;
+                    margin-left: 1in;
+                    margin-right: 1in;
+                    height: 48pt;
+                }
+                @frame footer {
+                    -pdf-frame-content: footerContent;
+                    bottom: 0.25in;
+                    margin-left: 1in;
+                    margin-right: 1in;
+                    height: 0.25in;
+                }
+            }
+                
+        </style>
+    </head>
+
+    <body>
+        <div id="headerContent">
+            <table style="font-size:large; border-collapse: collapse;">
+                <tr style="border-bottom:1px solid #000;font-size:large;font-weight:bold">
+                    <td width=45%>Hidden Pond Condominium Association</td>
+                    <td width=25%><b>{{report_type}}</b> Income Report</td>
+                    <td style=text-align:right width=30%>{{ report_range }}</td>
+                </tr>
+            </table>
+            <p>
+        </div>
+        <div id="detailHeaderContent">
+        <table style="font-size:large; border-collapse: collapse;">
+                <tr style="border-bottom:1px solid #000;font-size:large;font-weight:bold">
+                    <td width=45%>Hidden Pond Condominium Association</td>
+                    <td width=25%><b>{{report_type}}</b> Income Report</td>
+                    <td style=text-align:right width=30%>{{ report_range }}</td>
+                </tr>
+       </table>
+        <p>
+            <table style="font-size:large;text-align:left;font-weight:bold">
+                <tr>
+                    <td width=12% style="text-align: left">Type</td>
+                    <td width=8% style="text-align: left">Amount</td>
+                    <td width=10% style="text-align: left">Date</td>
+                    <td width=8% style="text-align: left">AcctID</td>
+                    <td width=30% style="text-align: left">Name</td>
+                    <td width=32% style="text-align: left">Memo</td>
+                </tr>
+            </table>
+        </div>
+        <div id="footerContent">
+            <table>
+                <tr>
+                    <td style="text-align: right">Page <pdf:pagenumber> of
+                         <pdf:pagecount> </td>
+                </tr>
+            </table>
+        </div>
+
+        <h1>SUMMARY</h1>
+        <p style="font-size=x-large;">
+            Assessment: {{ assessment|floatformat:2|intcomma }}<br />
+            Late Fees: {{ late_fees|floatformat:2|intcomma }}<br />
+            Fines: {{ fines|floatformat:2|intcomma }}<br />
+            Keys: {{ keys|floatformat:2|intcomma }}<br />
+            Billback: {{ billback|floatformat:2|intcomma }}<br />
+            Laundry: {{ laundry|floatformat:2|intcomma }}<br />
+            Misc: {{ misc|floatformat:2|intcomma }}<br />
+            Overpayments: {{ overpayments|floatformat:2|intcomma }}<br /><br />
+
+            <b>Income: </b> {{ total|floatformat:2|intcomma }}<br />
+	    {%if report_type == "Cash" %}
+            <b>Income (less X-Credits): </b> {{ total_less_x_credits|floatformat:2|intcomma }}<br />
+	    {%endif%}
+            <b>Checksum: </b>  {{ checksum|floatformat:2|intcomma }}<br />
+            <hr/>
+        </p>
+
+	{% if report_type == "Cash" %}
+        <p style="font-size=large;">
+	    <table style="font-size=medium;">
+        	{% load humanize %}
+        	{% for e in x_credits %}
+            	<tr>
+                    <td width=10% "padding-left:10px;">{{e.datetime|date:"m/d/Y"}}</td>
+               	    <td width=10% style="text-align:right;">{{ e.amount}}</td>
+               	    <td width=10% style="text-align:right;">{{ e.account.acct_id}}</td>
+                    <td width=70% style="padding-left:10px;">{{e.memo}}</td>
+            	</tr>
+        	{% endfor %}
+	    </table>
+	    <b>X-Credits Total: {{ x_credit_total|floatformat:2|intcomma }}</b><br />
+	    <hr/>
+	</p>
+	{% endif %}
+	
+
+        <pdf:nexttemplate name="detail" />
+        <h1>DETAIL</h1>
+        <table style="font-size:large;text-align:left;font-weight:bold">
+        <tr>
+            <td width=12% style="text-align: left">Type</td>
+            <td width=8% style="text-align: left">Amount</td>
+            <td width=10% style="text-align: left">Date</td>
+            <td width=8% style="text-align: left">AcctID</td>
+            <td width=30% style="text-align: left">Name</td>
+            <td width=32% style="text-align: left">Memo</td>
+
+        </tr>
+        </table>
+       <table>
+       {% for d in detail%}
+        <tr style="color:{% if d.type == 'ASSESSMENT' %} gray {% else %} black {% endif %}">
+            <td width=12%>{{d.type}}</td>
+            <td width=8% style="text-align: right; padding-right:5px">{{d.amount|floatformat:2|intcomma}}</td>
+            <td width=10%>{{d.date}}</td>
+            <td width=8%>{{d.acctID}}</td>
+            <td width=30%>{{d.name}}</td>
+            <td width=32%>{{d.memo}}</td>
+
+        </tr>
+        {% endfor %}
+    </table>
+        </p>
+    </body>
+</html>

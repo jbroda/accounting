@@ -1,0 +1,497 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{7ab8e556-a62e-45c5-88d9-d28c73562551}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>project\manage.py</StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <ProjectTypeGuids>{5F0BE9CA-D677-4A4D-8806-6076C0FAAD37};{349c5851-65df-11da-9384-00065b846f21};{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+    <LaunchProvider>Django launcher</LaunchProvider>
+    <InterpreterId>MSBuild|venv|$(MSBuildProjectFullPath)</InterpreterId>
+    <UseIISExpress>true</UseIISExpress>
+    <IsWindowsApplication>False</IsWindowsApplication>
+    <DjangoSettingsModule>hiddenpond.settings.local</DjangoSettingsModule>
+    <CommandLineArguments>
+    </CommandLineArguments>
+    <PythonRunWebServerCommandArguments>runserver --settings $(DjangoSettingsModule) 8000  $(CommandLineArguments) </PythonRunWebServerCommandArguments>
+    <PythonDebugWebServerCommandArguments>runserver --noreload --settings $(DjangoSettingsModule) 8000 $(CommandLineArguments) </PythonDebugWebServerCommandArguments>
+    <WebBrowserPort>8000</WebBrowserPort>
+    <WebBrowserUrl>http://localhost</WebBrowserUrl>
+    <PythonDebugWebServerCommandEnvironment>SERVER_EMAIL="Hidden Pond"
+EMAIL_HOST=127.0.0.1
+EMAIL_HOST_USER=''
+EMAIL_HOST_PASSWORD=''
+EMAIL_PORT=587
+DB_HOST=127.0.0.1
+DB_NAME=hiddenpond_db
+DB_USER=hiddenpond
+DB_PASSWORD=XXXXXXXXX
+DB_PORT=5432
+SECRET_KEY=dskfjsdkfj</PythonDebugWebServerCommandEnvironment>
+    <PythonDebugWebServerCommandType>script</PythonDebugWebServerCommandType>
+    <PythonRunWebServerCommandEnvironment>SERVER_EMAIL="Hidden Pond"
+EMAIL_HOST=127.0.0.1
+EMAIL_HOST_USER=''
+EMAIL_HOST_PASSWORD=''
+EMAIL_PORT=587
+DB_HOST=127.0.0.1
+DB_NAME=hiddenpond_db
+DB_USER=hiddenpond
+DB_PASSWORD=XXXXXXXXX
+DB_PORT=5432
+SECRET_KEY=dskfjsdkfj</PythonRunWebServerCommandEnvironment>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <PropertyGroup>
+    <VisualStudioVersion Condition=" '$(VisualStudioVersion)' == '' ">10.0</VisualStudioVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="db\db_dump.sh" />
+    <Content Include="db\db_recreate.sh" />
+    <Content Include="db\db_restore.sh" />
+    <Content Include="DEPLOY.rst" />
+    <Content Include="project\accounting\fixtures\accounting_entry_sql.txt" />
+    <Content Include="project\accounting\fixtures\accounts.txt" />
+    <Content Include="project\accounting\fixtures\initial_data.json" />
+    <Content Include="project\accounting\fixtures\rowell\one_account.txt" />
+    <Content Include="project\accounting\fixtures\rowell\test.txt" />
+    <Content Include="project\accounting\fixtures\rowell\transactions.txt" />
+    <Content Include="project\accounting\fixtures\site_data.json" />
+    <Content Include="project\accounting\templates\accounting\account_detail.html" />
+    <Content Include="project\accounting\templates\accounting\account_form.html" />
+    <Content Include="project\accounting\templates\accounting\account_list.html" />
+    <Content Include="project\accounting\templates\accounting\entry_form.html" />
+    <Content Include="project\accounting\templates\accounting\lease_confirm_delete.html" />
+    <Content Include="project\accounting\templates\accounting\lease_detail.html" />
+    <Content Include="project\accounting\templates\accounting\lease_form.html" />
+    <Content Include="project\accounting\templates\accounting\lease_tenant_form.html" />
+    <Content Include="project\accounting\templates\accounting\owner_confirm_delete.html" />
+    <Content Include="project\accounting\templates\accounting\owner_detail.html" />
+    <Content Include="project\accounting\templates\accounting\owner_form.html" />
+    <Content Include="project\accounting\templates\accounting\pdf_account_report.html" />
+    <Content Include="project\accounting\templates\accounting\pdf_account_trail_report.html" />
+    <Content Include="project\accounting\templates\accounting\pdf_income_report.html" />
+    <Content Include="project\accounting\templates\accounting\pdf_lease_expired_report.html" />
+    <Content Include="project\accounting\templates\accounting\pdf_lease_fha_report.html" />
+    <Content Include="project\accounting\templates\accounting\pdf_lease_vos_report.html" />
+    <Content Include="project\accounting\templates\accounting\pdf_statement_report.html" />
+    <Content Include="project\accounting\templates\accounting\pdf_transaction_report.html" />
+    <Content Include="project\accounting\templates\accounting\report_account_trail_form.html" />
+    <Content Include="project\accounting\templates\accounting\report_delinquency_form.html" />
+    <Content Include="project\accounting\templates\accounting\report_export_form.html" />
+    <Content Include="project\accounting\templates\accounting\report_form.html" />
+    <Content Include="project\accounting\templates\accounting\report_income_form.html" />
+    <Content Include="project\accounting\templates\accounting\report_lease_form.html" />
+    <Content Include="project\accounting\templates\accounting\report_link.html" />
+    <Content Include="project\accounting\templates\accounting\report_list.html" />
+    <Content Include="project\accounting\templates\accounting\report_progress_bar.html" />
+    <Content Include="project\accounting\templates\accounting\report_statement_form.html" />
+    <Content Include="project\accounting\templates\accounting\report_transaction_form.html" />
+    <Content Include="project\accounting\templates\accounting\task_result.html" />
+    <Content Include="project\accounting\templates\accounting\tenant_confirm_delete.html" />
+    <Content Include="project\accounting\templates\accounting\tenant_detail.html" />
+    <Content Include="project\accounting\templates\accounting\tenant_form.html" />
+    <Content Include="project\accounting\templates\accounting\vehicle_confirm_delete.html" />
+    <Content Include="project\accounting\templates\accounting\vehicle_detail.html" />
+    <Content Include="project\accounting\templates\accounting\vehicle_form.html" />
+    <Content Include="project\accounting\templates\search\indexes\accounting\account_rendered.txt" />
+    <Content Include="project\accounting\templates\search\indexes\accounting\account_text.txt" />
+    <Content Include="project\accounting\templates\search\indexes\accounting\owner_rendered.txt" />
+    <Content Include="project\accounting\templates\search\indexes\accounting\owner_text.txt" />
+    <Content Include="project\accounting\templates\search\indexes\accounting\tenant_rendered.txt" />
+    <Content Include="project\accounting\templates\search\indexes\accounting\tenant_text.txt" />
+    <Content Include="project\accounting\templates\search\indexes\accounting\vehicle_rendered.txt" />
+    <Content Include="project\accounting\templates\search\indexes\accounting\vehicle_text.txt" />
+    <Content Include="project\accounting\templates\search\search.html" />
+    <Content Include="project\media\leases\D26011\checkin.txt" />
+    <Content Include="project\media\leases\D26011\hp_voice_mail.txt" />
+    <Content Include="project\payment\templates\payment\base.html" />
+    <Content Include="project\payment\templates\payment\setup.html" />
+    <Content Include="project\static\css\bootstrap-datetimepicker.css" />
+    <Content Include="project\static\css\bootstrap-datetimepicker.min.css" />
+    <Content Include="project\static\css\bootstrap-editable.css" />
+    <Content Include="project\static\css\bootstrap-editable.min.css" />
+    <Content Include="project\static\css\bootstrap-theme.css" />
+    <Content Include="project\static\css\bootstrap-theme.min.css" />
+    <Content Include="project\static\css\bootstrap.css" />
+    <Content Include="project\static\css\bootstrap.min.css" />
+    <Content Include="project\static\css\buttons.bootstrap.css" />
+    <Content Include="project\static\css\buttons.bootstrap.min.css" />
+    <Content Include="project\static\css\buttons.dataTables.css" />
+    <Content Include="project\static\css\buttons.dataTables.min.css" />
+    <Content Include="project\static\css\dataTables.bootstrap.css" />
+    <Content Include="project\static\css\dataTables.bootstrap.min.css" />
+    <Content Include="project\static\css\dataTables.tableTools.css" />
+    <Content Include="project\static\css\dataTables.tableTools.min.css" />
+    <Content Include="project\static\css\font-awesome.css" />
+    <Content Include="project\static\css\font-awesome.min.css" />
+    <Content Include="project\static\css\jquery.dataTables.css" />
+    <Content Include="project\static\css\jquery.dataTables.min.css" />
+    <Content Include="project\static\css\navbar.css" />
+    <Content Include="project\static\css\navbar.min.css" />
+    <Content Include="project\static\css\project.css" />
+    <Content Include="project\static\css\project.min.css" />
+    <Content Include="project\static\css\signin.css" />
+    <Content Include="project\static\css\signin.min.css" />
+    <Content Include="project\static\css\tablesorter\themes\blue\asc.gif" />
+    <Content Include="project\static\css\tablesorter\themes\blue\bg.gif" />
+    <Content Include="project\static\css\tablesorter\themes\blue\desc.gif" />
+    <Content Include="project\static\css\tablesorter\themes\blue\style.css" />
+    <Content Include="project\static\css\tablesorter\themes\green\asc.png" />
+    <Content Include="project\static\css\tablesorter\themes\green\bg.png" />
+    <Content Include="project\static\css\tablesorter\themes\green\desc.png" />
+    <Content Include="project\static\css\tablesorter\themes\green\style.css" />
+    <Content Include="project\static\fonts\fontawesome-webfont.svg" />
+    <Content Include="project\static\fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="project\static\images\add.png" />
+    <Content Include="project\static\images\background.png" />
+    <Content Include="project\static\images\back_disabled.png" />
+    <Content Include="project\static\images\back_enabled.png" />
+    <Content Include="project\static\images\back_enabled_hover.png" />
+    <Content Include="project\static\images\collection.png" />
+    <Content Include="project\static\images\collection_hover.png" />
+    <Content Include="project\static\images\copy.png" />
+    <Content Include="project\static\images\copy_hover.png" />
+    <Content Include="project\static\images\csv.png" />
+    <Content Include="project\static\images\csv_hover.png" />
+    <Content Include="project\static\images\delete.png" />
+    <Content Include="project\static\images\favicon.ico" />
+    <Content Include="project\static\images\first.png" />
+    <Content Include="project\static\images\forward_disabled.png" />
+    <Content Include="project\static\images\forward_enabled.png" />
+    <Content Include="project\static\images\forward_enabled_hover.png" />
+    <Content Include="project\static\images\last.png" />
+    <Content Include="project\static\images\logo.png" />
+    <Content Include="project\static\images\next.png" />
+    <Content Include="project\static\images\pdf.png" />
+    <Content Include="project\static\images\pdf_hover.png" />
+    <Content Include="project\static\images\prev.png" />
+    <Content Include="project\static\images\print.png" />
+    <Content Include="project\static\images\print_hover.png" />
+    <Content Include="project\static\images\sort_asc.png" />
+    <Content Include="project\static\images\sort_asc_disabled.png" />
+    <Content Include="project\static\images\sort_both.png" />
+    <Content Include="project\static\images\sort_desc.png" />
+    <Content Include="project\static\images\sort_desc_disabled.png" />
+    <Content Include="project\static\images\xls.png" />
+    <Content Include="project\static\images\xls_hover.png" />
+    <Content Include="project\static\img\clear.png" />
+    <Content Include="project\static\img\loading.gif" />
+    <Content Include="project\static\js\accounts\account_detail.js" />
+    <Content Include="project\static\js\accounts\account_detail.min.js" />
+    <Content Include="project\static\js\accounts\account_form.js" />
+    <Content Include="project\static\js\accounts\account_form.min.js" />
+    <Content Include="project\static\js\accounts\account_list.js" />
+    <Content Include="project\static\js\accounts\account_list.min.js" />
+    <Content Include="project\static\js\accounts\csrf.js" />
+    <Content Include="project\static\js\accounts\csrf.min.js" />
+    <Content Include="project\static\js\accounts\DateTime.js" />
+    <Content Include="project\static\js\accounts\DateTime.min.js" />
+    <Content Include="project\static\js\accounts\dateTimeSort.js" />
+    <Content Include="project\static\js\accounts\dateTimeSort.min.js" />
+    <Content Include="project\static\js\accounts\entry_form.js" />
+    <Content Include="project\static\js\accounts\entry_form.min.js" />
+    <Content Include="project\static\js\accounts\naturalSort.js" />
+    <Content Include="project\static\js\accounts\naturalSort.min.js" />
+    <Content Include="project\static\js\accounts\project.js" />
+    <Content Include="project\static\js\accounts\project.min.js" />
+    <Content Include="project\static\js\accounts\report_form.js" />
+    <Content Include="project\static\js\accounts\report_form.min.js" />
+    <Content Include="project\static\js\additional-methods.js" />
+    <Content Include="project\static\js\additional-methods.min.js" />
+    <Content Include="project\static\js\bootbox.js" />
+    <Content Include="project\static\js\bootbox.min.js" />
+    <Content Include="project\static\js\bootstrap-datetimepicker.js" />
+    <Content Include="project\static\js\bootstrap-datetimepicker.min.js" />
+    <Content Include="project\static\js\bootstrap-editable.js" />
+    <Content Include="project\static\js\bootstrap-editable.min.js" />
+    <Content Include="project\static\js\bootstrap.js" />
+    <Content Include="project\static\js\bootstrap.min.js" />
+    <Content Include="project\static\js\buttons.bootstrap.js" />
+    <Content Include="project\static\js\buttons.bootstrap.min.js" />
+    <Content Include="project\static\js\buttons.html5.js" />
+    <Content Include="project\static\js\buttons.html5.min.js" />
+    <Content Include="project\static\js\buttons.print.js" />
+    <Content Include="project\static\js\buttons.print.min.js" />
+    <Content Include="project\static\js\dataTables.bootstrap.js" />
+    <Content Include="project\static\js\dataTables.bootstrap.min.js" />
+    <Content Include="project\static\js\dataTables.buttons.js" />
+    <Content Include="project\static\js\dataTables.buttons.min.js" />
+    <Content Include="project\static\js\dataTables.tableTools.js" />
+    <Content Include="project\static\js\dataTables.tableTools.min.js" />
+    <Content Include="project\static\js\html5shiv.js" />
+    <Content Include="project\static\js\jquery.cookie.js" />
+    <Content Include="project\static\js\jquery.dataTables.js" />
+    <Content Include="project\static\js\jquery.dataTables.min.js" />
+    <Content Include="project\static\js\jquery.formset.js" />
+    <Content Include="project\static\js\jquery.formset.min.js" />
+    <Content Include="project\static\js\jquery.js" />
+    <Content Include="project\static\js\jquery.min.js" />
+    <Content Include="project\static\js\jquery.tablesorter.js" />
+    <Content Include="project\static\js\jquery.tablesorter.min.js" />
+    <Content Include="project\static\js\jquery.tablesorter.pager.js" />
+    <Content Include="project\static\js\jquery.validate.js" />
+    <Content Include="project\static\js\jquery.validate.min.js" />
+    <Content Include="project\static\js\moment.js" />
+    <Content Include="project\static\js\moment.min.js" />
+    <Content Include="project\static\js\payment\payment.js" />
+    <Content Include="project\static\js\payment\payment.min.js" />
+    <Content Include="project\static\js\respond.min.js" />
+    <Content Include="project\static\web.config" />
+    <Content Include="project\tasks\templates\tasks\base.html" />
+    <Content Include="project\tasks\templates\tasks\CreateTask.html" />
+    <Content Include="project\tasks\templates\tasks\forgot.html" />
+    <Content Include="project\tasks\templates\tasks\home.html" />
+    <Content Include="project\tasks\templates\tasks\login.html" />
+    <Content Include="project\tasks\templates\tasks\message.html" />
+    <Content Include="project\tasks\templates\tasks\resetpassword.html" />
+    <Content Include="project\tasks\templates\tasks\signup.html" />
+    <Content Include="project\tasks\templates\tasks\tasks.html" />
+    <Content Include="project\templates\404.html" />
+    <Content Include="project\templates\500.html" />
+    <Content Include="project\templates\admin\base_site.html" />
+    <Content Include="project\templates\base.html" />
+    <Content Include="project\templates\index.html" />
+    <Content Include="project\templates\registration\acceptance_email.txt" />
+    <Content Include="project\templates\registration\acceptance_email_subject.txt" />
+    <Content Include="project\templates\registration\activate.html" />
+    <Content Include="project\templates\registration\activation_complete.html" />
+    <Content Include="project\templates\registration\activation_email.txt" />
+    <Content Include="project\templates\registration\activation_email_subject.txt" />
+    <Content Include="project\templates\registration\activation_form.html" />
+    <Content Include="project\templates\registration\base.html" />
+    <Content Include="project\templates\registration\logout.html" />
+    <Content Include="project\templates\registration\notification_email.txt" />
+    <Content Include="project\templates\registration\notification_email_subject.txt" />
+    <Content Include="project\templates\registration\registration_closed.html" />
+    <Content Include="project\templates\registration\registration_email.txt" />
+    <Content Include="project\templates\registration\registration_email_subject.txt" />
+    <Content Include="project\templates\registration\logged_out.html" />
+    <Content Include="project\templates\registration\login.html" />
+    <Content Include="project\templates\registration\password_change_done.html" />
+    <Content Include="project\templates\registration\password_change_form.html" />
+    <Content Include="project\templates\registration\password_reset_complete.html" />
+    <Content Include="project\templates\registration\password_reset_confirm.html" />
+    <Content Include="project\templates\registration\password_reset_done.html" />
+    <Content Include="project\templates\registration\password_reset_email.html" />
+    <Content Include="project\templates\registration\password_reset_form.html" />
+    <Content Include="project\templates\registration\password_reset_subject.txt" />
+    <Content Include="project\templates\registration\registration_complete.html" />
+    <Content Include="project\templates\registration\registration_form.html" />
+    <Content Include="project\templates\registration\rejection_email.txt" />
+    <Content Include="project\templates\registration\rejection_email_subject.txt" />
+    <Content Include="project\templates\report_error.html" />
+    <Content Include="project\templates\search_results.html" />
+    <Content Include="README.rst" />
+    <Content Include="requirements.txt" />
+    <Content Include="requirements\base.txt" />
+    <Content Include="requirements\local.txt" />
+    <Content Include="requirements\production.txt" />
+    <Content Include="requirements\test.txt" />
+    <Content Include="runtime.txt" />
+    <Content Include="run_deb.sh" />
+    <Content Include="run_rel.sh" />
+    <Content Include="secret_key.txt" />
+    <Content Include="utils\apply_assessment.sh" />
+    <Content Include="utils\apply_assessment_deb.bat" />
+    <Content Include="utils\apply_assessment_rel.bat" />
+    <Content Include="utils\apply_late_fee.sh" />
+    <Content Include="utils\backup_db.sh" />
+    <Content Include="utils\calc_entry_balances.sh" />
+    <Content Include="utils\sync_balances.sh" />
+    <Content Include="utils\update_search_index.sh" />
+    <Content Include="web.config" />
+    <None Include="web.debug.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="bin\wfastcgi.py" />
+    <Compile Include="bin\wsgi.py" />
+    <Compile Include="docs\conf.py" />
+    <Compile Include="docs\__init__.py" />
+    <Compile Include="env_pythonanywere.py" />
+    <Compile Include="project\accounting\admin.py" />
+    <Compile Include="project\accounting\cc_info.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="project\accounting\fixtures\cv.py" />
+    <Compile Include="project\accounting\fixtures\mgd\add_transaction.py" />
+    <Compile Include="project\accounting\fixtures\owners.py" />
+    <Compile Include="project\accounting\fixtures\rowell\transactions.py" />
+    <Compile Include="project\accounting\forms.py" />
+    <Compile Include="project\accounting\list_file.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="project\accounting\management\commands\apply_assessment.py" />
+    <Compile Include="project\accounting\management\commands\apply_late_fee.py" />
+    <Compile Include="project\accounting\management\commands\apply_transaction.py" />
+    <Compile Include="project\accounting\management\commands\backup_db.py" />
+    <Compile Include="project\accounting\management\commands\calc_entry_balances.py" />
+    <Compile Include="project\accounting\management\commands\delete_entry.py" />
+    <Compile Include="project\accounting\management\commands\sync_account_balances.py" />
+    <Compile Include="project\accounting\management\commands\__init__.py" />
+    <Compile Include="project\accounting\management\__init__.py" />
+    <Compile Include="project\accounting\migrations\0001_initial.py" />
+    <Compile Include="project\accounting\migrations\0002_account_is_no_statement.py" />
+    <Compile Include="project\accounting\migrations\0003_is_email_statement.py" />
+    <Compile Include="project\accounting\migrations\0004_category_amount.py" />
+    <Compile Include="project\accounting\migrations\__init__.py" />
+    <Compile Include="project\accounting\models.py" />
+    <Compile Include="project\accounting\reports.py" />
+    <Compile Include="project\accounting\myrequests.py" />
+    <Compile Include="project\accounting\search_indexes.py" />
+    <Compile Include="project\accounting\tasks.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="project\accounting\templatetags\extras.py" />
+    <Compile Include="project\accounting\templatetags\__init__.py" />
+    <Compile Include="project\accounting\tests.py" />
+    <Compile Include="project\accounting\urls.py" />
+    <Compile Include="project\accounting\utils.py" />
+    <Compile Include="project\accounting\views.py" />
+    <Compile Include="project\accounting\__init__.py" />
+    <Compile Include="project\hiddenpond\admin.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="project\hiddenpond\apps.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="project\hiddenpond\media.py" />
+    <Compile Include="project\hiddenpond\mixins.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="project\hiddenpond\models.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="project\hiddenpond\signals.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="project\hiddenpond\search.py" />
+    <Compile Include="project\hiddenpond\settings\base.py" />
+    <Compile Include="project\hiddenpond\settings\local.py" />
+    <Compile Include="project\hiddenpond\settings\production.py" />
+    <Compile Include="project\hiddenpond\settings\storage.py" />
+    <Compile Include="project\hiddenpond\settings\test.py" />
+    <Compile Include="project\hiddenpond\settings\__init__.py" />
+    <Compile Include="project\hiddenpond\urls.py" />
+    <Compile Include="project\hiddenpond\wsgi.py" />
+    <Compile Include="project\hiddenpond\__init__.py" />
+    <Compile Include="project\manage.py" />
+    <Compile Include="project\payment\forms.py" />
+    <Compile Include="project\payment\urls.py" />
+    <Compile Include="project\payment\views.py" />
+    <Compile Include="project\payment\__init__.py" />
+    <Compile Include="project\regsupplement\admin.py" />
+    <Compile Include="project\regsupplement\models.py" />
+    <Compile Include="project\regsupplement\__init__.py" />
+    <Compile Include="project\tasks\main.py" />
+    <Compile Include="project\tasks\urls.py" />
+    <Compile Include="project\tasks\__init__.py" />
+    <Compile Include="scripts\createadmin.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="bin" />
+    <Folder Include="db\" />
+    <Folder Include="docs" />
+    <Folder Include="project" />
+    <Folder Include="project\accounting" />
+    <Folder Include="project\accounting\fixtures" />
+    <Folder Include="project\accounting\fixtures\mgd" />
+    <Folder Include="project\accounting\fixtures\rowell" />
+    <Folder Include="project\accounting\management" />
+    <Folder Include="project\accounting\management\commands" />
+    <Folder Include="project\accounting\migrations\" />
+    <Folder Include="project\accounting\templates\" />
+    <Folder Include="project\accounting\templates\accounting" />
+    <Folder Include="project\accounting\templates\search" />
+    <Folder Include="project\accounting\templates\search\indexes\" />
+    <Folder Include="project\accounting\templates\search\indexes\accounting" />
+    <Folder Include="project\accounting\templatetags" />
+    <Folder Include="project\hiddenpond" />
+    <Folder Include="project\hiddenpond\settings" />
+    <Folder Include="project\media\" />
+    <Folder Include="project\media\leases\" />
+    <Folder Include="project\media\leases\D26011" />
+    <Folder Include="project\payment" />
+    <Folder Include="project\payment\templates\" />
+    <Folder Include="project\payment\templates\payment" />
+    <Folder Include="project\regsupplement\" />
+    <Folder Include="project\static\" />
+    <Folder Include="project\static\css" />
+    <Folder Include="project\static\css\tablesorter\" />
+    <Folder Include="project\static\css\tablesorter\themes\" />
+    <Folder Include="project\static\css\tablesorter\themes\blue" />
+    <Folder Include="project\static\css\tablesorter\themes\green" />
+    <Folder Include="project\static\fonts" />
+    <Folder Include="project\static\images" />
+    <Folder Include="project\static\img\" />
+    <Folder Include="project\static\js" />
+    <Folder Include="project\static\js\accounts" />
+    <Folder Include="project\static\js\payment" />
+    <Folder Include="project\tasks" />
+    <Folder Include="project\tasks\templates\" />
+    <Folder Include="project\tasks\templates\tasks" />
+    <Folder Include="project\templates" />
+    <Folder Include="project\templates\admin" />
+    <Folder Include="project\templates\registration" />
+    <Folder Include="requirements" />
+    <Folder Include="scripts" />
+    <Folder Include="utils\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Interpreter Include="G:\Temp\venv\">
+      <Id>venv</Id>
+      <Version>2.7</Version>
+      <Description>venv (Python 2.7 (32-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+      <Architecture>X86</Architecture>
+    </Interpreter>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.Django.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>True</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:54530/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+        <WebProjectProperties>
+          <StartPageUrl>
+          </StartPageUrl>
+          <StartAction>CurrentPage</StartAction>
+          <AspNetDebugging>True</AspNetDebugging>
+          <SilverlightDebugging>False</SilverlightDebugging>
+          <NativeDebugging>False</NativeDebugging>
+          <SQLDebugging>False</SQLDebugging>
+          <ExternalProgram>
+          </ExternalProgram>
+          <StartExternalURL>
+          </StartExternalURL>
+          <StartCmdLineArguments>
+          </StartCmdLineArguments>
+          <StartWorkingDirectory>
+          </StartWorkingDirectory>
+          <EnableENC>True</EnableENC>
+          <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+</Project>

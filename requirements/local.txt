@@ -1,0 +1,5 @@
+# Debug dependencies 
+-r base.txt
+
+django-debug-toolbar==1.2.1
+django-sslserver==0.14

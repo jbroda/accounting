@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+<style>
+	form.create-task {
+	        border-top: 1px solid #8dbdd8;
+	        border-bottom: 1px solid #8dbdd8;
+	        background-color: #F0F0F6;
+	        width: 830px;
+	        font-size: 1.0em;
+	        color: #333;
+	}
+	
+	form.create-task label.error, label.error {
+	        color: red;
+	        font-style: italic;
+	        font-weight: bold;
+	}
+	div.error { display: none; }
+</style>
+
+<!-- <h4>Create a Task</h4>
+-->
+
+<hr style="height:5px; visibility:hidden; margin: 0px" />
+
+<div id="create-task-div">
+<form name="create-task" class="create-task" id="create-task">
+<table border="0">
+  <tr>
+  	<td><label for="description">Description:</label></td>
+  </tr>
+  <tr>
+  <td> 
+  	<textarea name="description" id="description" rows="5" cols="100" required></textarea>
+  </td>
+  </tr>  
+  <tr>
+  	<td><label for="prority">Priority:</label></td>
+  </tr>
+  <tr>
+   <td name="priority-td" id="priority-td">
+     <input type="radio" name="priority" id="emerg"  value="1: emergency" required>emergency<br>
+     <input type="radio" name="priority" id="high"   value="2: 24 hours">24 hours<br>
+     <input type="radio" name="priority" id="medium" value="3: 48 hours">48 hours<br>
+     <input type="radio" name="priority" id="low"    value="4: low">low<br>
+   </td>
+  </tr>
+</table>
+
+ <div class="error">
+ </div>
+
+<p><input type="submit" value="Create" name="submit" id="submit"></p>
+</form>
+</div>
+
+<div id="task-creating-div" style="display:none">
+</div>
+
+<!-- "task created" message -->
+<div id="task-created-div" style="display:none">
+ <div id="task-created-msg-div">
+ 	<h2 style="color:green">Task created!</h2>
+ </div>
+ <a href="" onclick="javascript:showCreateTaskForm(); return false;">Create another task</a>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+  ///
+  $.validator.setDefaults({
+	submitHandler: function() { onCreateTaskFormSubmit(); }
+  });
+
+  /// When the page loads.
+  $(document).ready(function() 
+  { 
+    // validate the form on keyup and submit
+      $("#create-task").validate({
+          errorLabelContainer:
+           $("#create-task div.error"),
+		rules: {
+			description: {
+				required: true
+			},
+			priority: {
+				required: true
+			}
+		},
+		messages: {
+			description: {
+				required: "Please enter a description<br>"
+			},
+			priority: {
+				required: "Please provide a priority<br>"
+			}
+		}
+	});
+  });
+  
+  ///
+  function onCreateTaskFormSubmit() 
+  {
+     console.log("onCreateTaskFormSubmit() called");
+     
+     var desc  = $("#description");
+     var prio  = $("input:radio[name=priority]:checked");
+
+	$("#create-task-div").hide();
+	$("#task-creating-div").html("<h2>Creating a task ...</h2>");
+	$("#task-creating-div").show();
+    
+     var request = $.ajax({
+  		type: "POST",
+  		url: "create_task",
+  		data: { priority: prio.val(), description: desc.val() },
+  		dataType: "html"
+		});
+		
+	 request.done(function( msg ) {
+	 	console.log("success: " + msg);
+		$("#create-task-div").hide();
+		$("#task-creating-div").hide();
+		$("#task-created-msg-div").html(msg);	
+		$("#task-created-div").show();	
+	 });
+	
+	 request.fail(function( jqXHR, textStatus ) {
+	 	console.log("failure: " + textStatus);
+		$("#task-creating-div").html(textStatus);
+	   	alert("Request failed: " + textStatus);
+	 });
+  }
+  
+  ///
+  function showCreateTaskForm()
+  {
+    $("#task-created-div").hide();
+	$("#create-task-div").show();			  
+  }
+</script>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block title %}Reports{% endblock %}
+
+{% block page_title %}{% endblock page_title %}
+
+{% block extra_css %}
+
+{% if debug %}
+    <link href="{% static 'css/bootstrap-datetimepicker.css' %}" rel="stylesheet">
+{% else %}
+    <link href="{% static 'css/bootstrap-datetimepicker.min.css' %}" rel="stylesheet">
+{% endif %}
+
+{% endblock extra_css %}
+
+{% block content %}
+
+<p>The following reports are available:</p>
+<div class="panel-group" id="reportPanel">
+    {% include "accounting/report_transaction_form.html" %}
+    {% include "accounting/report_statement_form.html" %}
+    {% include "accounting/report_delinquency_form.html" %}
+    {% include "accounting/report_income_form.html" %}
+    {% include "accounting/report_account_trail_form.html" %}
+    {% include "accounting/report_account_audit_form.html" %}
+    {% include "accounting/report_lease_form.html" %}
+    {% include "accounting/report_export_form.html" %}
+</div>
+
+{% endblock content %}
+
+{% block extra_js %}
+
+{% if debug %}
+    <script src="{% static 'js/bootbox.js' %}"></script>
+    <script src="{% static 'js/moment.js' %}"></script>
+    <script src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script src="{% static 'js/accounts/csrf.js' %}"></script>
+    <script src="{% static 'js/accounts/report_form.js' %}"></script>
+{% else %}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/bootbox.js/4.1.0/bootbox.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.5.1/moment.min.js"></script>
+    <script src="{% static 'js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script src="{% static 'js/accounts/csrf.min.js' %}"></script>
+    <script src="{% static 'js/accounts/report_form.min.js' %}"></script>
+{% endif %}
+
+
+{% endblock extra_js %}

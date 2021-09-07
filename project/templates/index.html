@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% load extras %}
+
+{% block title %}Hidden Pond{% endblock %}
+
+{% block page_title %}
+    Welcome, {{user.first_name}}!
+<div style="float:right">Today is {% now "F jS, Y" %}</div>
+{% endblock page_title %}
+
+{% block content %}
+
+{% if user.is_staff %}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Accounting
+    </div>
+    <div class="panel-body">
+        <div class="btn-group" role="group">
+            <a id="view_accounts" onclick="$(this).addClass('disabled');"
+               role="button" class="btn btn-default" href="accounting">View Accounts</a>
+
+            <a id="gen_reports" onclick="$(this).addClass('disabled');"
+               role="button" class="btn btn-default" href="accounting/reports">Generate Reports</a>
+
+            <a id="apply_assessments" onclick="$(this).addClass('btn-danger disabled'); $(this).text('!!! PLEASE WAIT !!!')"
+               role="button" class="btn btn-default" href="accounting/apply_assessments">Apply Assessments for {% next_month %}</a>
+
+            <a id="apply_late_fees" onclick="$(this).addClass('btn-danger disabled'); $(this).text('!!! PLEASE WAIT !!!')"
+               role="button" class="btn btn-default" href="accounting/apply_late_fees">Apply Late Fees for {% now 'F' %}</a>
+
+            <a id="send_statements" onclick="$(this).addClass('btn-danger disabled'); $(this).text('!!! PLEASE WAIT !!!')"
+               role="button" class="btn btn-default" href="accounting/report/statement/email/{% uuid4 %}/">Send {% now 'M jS' %} Statements</a>
+        </div>
+    </div>
+</div>
+
+<!--
+<div class="panel panel-default">
+    <div class="panel-heading">
+        Maintenance
+    </div>
+    <div class="panel-body">
+        <div class="btn-group" role="group">
+            <a role="button" class="btn btn-default" href="tasks/create_task">Create a Task</a>
+            <a role="button" class="btn btn-default" href="tasks/view_open_tasks">View Open Tasks</a>
+            <a role="button" class="btn btn-default" href="tasks/view_completed_tasks">View Completed Tasks</a>
+        </div>
+    </div>
+</div>
+-->
+
+<!--
+<div class="panel panel-default">
+    <div class="panel-heading">
+       Payroll
+    </div>
+    <div class="panel-body">
+        <div class="btn-group" role="group">
+            <a role="button" class="btn btn-default" href="https://payrol.herokuapp.com/">View Payroll Data</a>
+        </div>
+    </div>
+</div>
+-->
+
+
+{% else %}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+    </div>
+    <div class="panel-body">
+        <div class="btn-group" role="group">
+            <a id="view_accounts" onclick="$(this).addClass('disabled');"
+                role="button" class="btn btn-default" href="accounting">
+                {% if user.owner.account.count == 1 %}
+                    View Account
+                {% else %}
+                    View Accounts
+                {% endif %}
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endif %}
+
+{% endblock content %}
+
+{% block extra_js %}
+
+{% if debug %}
+
+{% else %}
+
+{% endif %}
+
+{% endblock extra_js %}

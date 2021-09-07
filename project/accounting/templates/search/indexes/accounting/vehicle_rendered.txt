@@ -1,0 +1,3 @@
+<a href={{ object.get_absolute_url }}>
+{{ object.year_make_and_model }}, {{ object.color }}, {{object.license_plate }}
+</a>

@@ -1,0 +1,148 @@
+{% if user.is_staff %}
+
+<div id="transactionPanel" class="panel panel-default">
+
+    <div class="panel-heading">
+        <a class="panel-title" data-toggle="collapse"
+           data-parent="#transactionPanel" href="#transaction">
+            Enter a transaction
+        </a>
+    </div>
+
+    <div id="transaction" class="panel-collapse collapse">
+        <div class="panel-body">
+            <form name="entry-form " id="entry-form" class="form-horizontal" role="form">
+                {% csrf_token %} 
+                {% if form.errors %}
+                    <div class="panel panel-default">
+                        <div class="panel-body"> {{ form.errors }}
+                        </div>
+                    </div> 
+                {% endif %}
+
+                <div class="row">
+                    <div class="col-sm-5">
+                        <small>
+                            <ul>
+                                <li> Select a category and enter a memo
+                                <li> Enter a positive amount for a charge or a negative one for a payment/credit 
+                                {% if account_list %}
+                                <li> Select at least one account from the list below
+                                {% endif %}
+                                <li> Press "Enter"
+                            </ul>    
+                        </small>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label for="amount" class="col-sm-4 control-label">Date</label>
+                            <div class="col-sm-6">
+                                <div class="input-group date" 
+                                     id="dtpicker" 
+                                     data-date-format="MMMM DD, YYYY">
+                                    <input class="form-control" id="date"
+                                            name="date" type="text"
+                                            value="{{ form.date.value|date:'F d, Y'}}" />
+                                    <span class="input-group-addon"><span class="fa fa-calendar"></span></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label for="category" class="control-label col-sm-4">Category</label>
+                                    <div class="col-sm-7">
+                                        <select tabindex="1" class="form-control" id="category" name="category">
+                                            {% for type in category_types %}
+                                                {% if type.0 == categories.0.PAYMENT %}
+                                                    <option>{{ type.1 }}</option>
+                                                {% elif type.0 == categories.0.CHARGE %}
+                                                    <optgroup label="{{ type.1 }}">
+                                                        {% for category in categories %}
+                                                            {% if category.is_visible and category.type == type.0 %}
+                                                            <option>{{ category.name }}</option>
+                                                            {% endif %} 
+                                                        {% endfor %}
+                                                    </optgroup> 
+                                                {% elif type.0 == categories.0.ASSESSMENT %}
+                                                     {% for category in categories %}
+                                                     	{% if category.is_visible and category.type == type.0 %}
+                                                            <option>{{ category.name }}</option>
+                                                     	{% endif %} 
+                                                     {% endfor %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label for="amount" class="col-sm-4 control-label">Amount</label>
+                                    <div class="col-sm-4">
+                                        <input tabindex="2" class="form-control" id="amount"
+                                               name="amount" placeholder="$" type="text"
+                                               value="{{ form.amount.value|floatformat:2 }}" />
+                                    </div>
+
+                                    <div class="col-sm-3">
+                                        <button tabindex="4" type="submit"
+                                                class="btn btn-block btn-success" id="enter">
+                                            Enter
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-6">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label for="memo" class="col-sm-2 control-label">Memo</label>
+                                    <div class="col-sm-8">
+                                        <textarea tabindex="3" name="memo" id="memo"
+                                                  class="form-control" rows="4">{{form.memo.value}}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var CATEGORIES = {
+        {% for category in categories %}
+            {% if category.is_visible %}
+                "{{ category.name }}": "{{category.amount|floatformat:2}}" {% if not forloop.last %}, {% endif %}
+            {% endif %}
+        {% endfor %}
+    };
+
+    var CHARGE_CATEGORIES = {        
+        {% for category in categories %}
+            {% if category.is_visible %}
+                {% if category.type == category.CHARGE or category.type == category.ASSESSMENT %}
+                    "{{ category.name }}": "{{category.amount|floatformat:2}}" {% if not forloop.last %}, {% endif %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    };
+        
+</script>
+
+{% endif %}

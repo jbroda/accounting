@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block title %}Hidden Pond Login{% endblock %}
+
+{% block page_title %}{% endblock page_title %}
+
+{% block content %}
+
+<!-- Sign-in page -->
+<div class="container signin-body">
+    <form class="form-signin" role="form" method="post" 
+          action="{% url 'django.contrib.auth.views.login' %}">
+        {% csrf_token %}
+
+        <img class="logo-img" src="{% static 'images/logo.png' %}" alt="Logo">
+
+        <div class="input-group">
+            <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
+            <input id={{ form.username.id_for_label }} name="username" type="text" 
+                   class="form-control" placeholder="Username" required autofocus>
+        </div>
+
+        <div class="input-group">
+            <span class="input-group-addon"><i class="fa fa-key fa-fw"></i></span>
+            <input id="{{ form.password.id_for_label }}" name="password" type="password" 
+                   class="form-control" placeholder="Password" required>
+        </div>
+
+        <div class="form-submit">
+            <button class="btn btn-primary" type="submit" value="login">Sign in</button>
+            <a class="btn btn-default pull-right" href="/user/register/">Request Access</a>
+            <br/><a href="/user/password/reset/">Forgot Password?</a>
+            <input type="hidden" name="next" value="{{ next }}" />
+        </div>
+    </form>
+</div> 
+
+{% if form.non_field_errors %}
+<div id="login_errors" style="display:block">
+    {{ form.non_field_errors.as_ul }}
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block extra_js %}
+<script type="text/javascript">
+    $(document).ready(function() {
+            //$('#login_errors').fadeOut(3000);
+    });
+</script>
+{% endblock extra_js %}

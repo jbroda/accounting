@@ -1,0 +1,157 @@
+<!DOCTYPE>
+<html>
+    <head>
+        <title>Delinquent Accounts</title>
+        <style type="text/css">
+            @page {
+                size: {{ pagesize|default:'letter portrait' }};
+                margin: 1.5in 1in 0.5in 1in
+                @frame header {
+                    -pdf-frame-content: headerContent;
+                    top: 1in;
+                    margin-left: 1in;
+                    margin-right: 1in;
+                    height: 48pt;
+                }
+                @frame footer {
+                    -pdf-frame-content: footerContent;
+                    bottom: 0.25in;
+                    margin-left: 1in;
+                    margin-right: 1in;
+                    height: 0.25in;
+                }     
+            }
+                
+            @page delinquentdetail {
+                size: {{ pagesize|default:'letter portrait' }};
+                margin: 1.5in 1in 0.5in 1in;
+                @frame header {
+                    -pdf-frame-content: detailHeaderContent;
+                    top: 1in;
+                    margin-left: 1in;
+                    margin-right: 1in;
+                    height: 48pt;
+                }
+                @frame footer {
+                    -pdf-frame-content: footerContent;
+                    bottom: 0.25in;
+                    margin-left: 1in;
+                    margin-right: 1in;
+                    height: 0.25in;
+                }     
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="headerContent">
+            <table style="font-size=large; border-collapse: collapse;">
+                <tr style="border-bottom:1px solid #000;font-size=large;font-weight:bold">
+                    <td width=47%>Hidden Pond Condominium Association</td>
+                    <td width=33%>Delinquent Account Summary</td>
+                    <td style=text-align:right width=20%>{{ report_date }}</td>
+                </tr>
+            </table>
+            <p>
+            <table style="font-size=large;text-align:left;font-weight=bold">
+                <tr>
+                    <td width=16%>Account</td>
+                    <td width=36%>Owner Name</td>
+                    <td width=16%>Last Paid Date</td>
+                    <td width=16% style="text-align:right">Last Paid Amt</td>
+                    <td width=16% style="text-align:right">Balance</td>
+                </tr>
+            </table>
+        </div>
+        <div id="detailHeaderContent">
+            <table style="font-size=large; border-collapse: collapse;">
+                <tr style="border-bottom:1px solid #000;font-size=large;font-weight:bold">
+                    <td width=47%>Hidden Pond Condominium Association</td>
+                    <td width=33%>Delinquent Account Detail</td>
+                    <td style=text-align:right width=20%>{{ report_date }}</td>
+                </tr>
+            </table>
+            <p>
+            <table style="font-size=large;text-align:left;font-weight=bold">
+                <tr>
+                    <td width=5%></td>
+                    <td width=15% style="text-align: left">Date</td>
+                    <td width=40% style="text-align: left">Description</td>
+                    <td width=20% style="text-align: right">Amount</td>
+                    <td width=20% style="text-align: right">Balance</td>
+                </tr>
+            </table>
+        </div>
+        <div id="footerContent">
+            <table>
+                <tr>
+                    <td style="text-align: right">Page <pdf:pagenumber> of
+                         <pdf:pagecount> </td>
+                </tr>
+            </table>
+        </div>
+        <table>
+        {% load humanize %}
+        {% for d in delinquent_info%}
+            <tr>
+            <td width=16%>{{ d.account.orig_id }} / {{d.account.acct_id}}</td> 
+            <td width=36%>{{ d.ownerName }} </td>
+            <td width=16%>{{d.lastPaidDate|date:"m/d/Y"}}</td>
+            <td width=16% style="text-align:right">
+                    ${{d.lastPaidAmount|floatformat:2|intcomma}}</td>
+            <td width=16% style="text-align:right">
+               ${{d.account.balance|intcomma}}</td> 
+            </tr>
+        {% endfor %}
+            <tr>
+            <td width=16%></td> 
+            <td width=36%></td> 
+            <td width=16%></td> 
+            <td width=16% style="font-size:large;font-weight:bold;text-align:right">
+                    Other Amounts:</td>
+            <td width=16% 
+               style="font-size:large;text-align:right;font-weight:bold">
+               ${{other_amount|intcomma}}</td> 
+            </tr>
+            <tr>
+            <td width=16%></td> 
+            <td width=36%></td> 
+            <td width=16%></td> 
+            <td width=16% style="font-size:large;font-weight:bold;text-align:right">
+                    Total Amount:</td>
+            <td width=16% 
+               style="font-size:large;text-align:right;font-weight:bold">
+               ${{total_amount|intcomma}}</td> 
+            </tr>
+        </table>
+
+        <pdf:nexttemplate name="delinquentdetail"/>
+        <pdf:nextpage></pdf:nextpage>
+
+        {% for d in delinquent_info%}
+        <p/>
+        <table style="font-size:large;font-weight:bold">
+            <tr>
+            <td> {{ d.account.acct_id}}: {{d.ownerName}} </td>
+            <td style="text-align:right;">
+                    Balance: {{d.account.balance|intcomma}}</td>
+            </tr>
+        </table>
+        <table>
+            {% for entry in d.entries %}
+            <tr>
+                <td width=5%></td>
+                <td width=15%>{{ entry.datetime|date:"m/d/Y" }}</td>
+                <td width=40%>{{ entry.memo }}</td>
+                <td width=20% style="text-align:right; color:{% if entry.amount <= 0 %} green {% else %} red {% endif %}">
+                        {{ entry.amount|floatformat:2|intcomma }}
+                </td>
+                <td width=20% style="text-align:right; color:{% if entry.balance <= 0 %} green {% else %} red {% endif %}">
+                        {{ entry.balance|floatformat:2|intcomma }}
+                </td>
+            </tr>
+            {% endfor %}
+        {% endfor %}
+        </table>
+    </body>
+</html>

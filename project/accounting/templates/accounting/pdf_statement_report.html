@@ -1,0 +1,156 @@
+<!DOCTYPE>
+
+{% load humanize %}
+
+<html>
+<head>
+    <title>Monthly Statements</title>
+    <style type="text/css">
+            @page {
+                size: {{ pagesize|default:'letter portrait' }};
+                margin: 0.5in 0.75in 0.51in 0.75in;
+                @frame header {
+                    -pdf-frame-content: headerContent;
+                    top: 0.25in;
+                    margin-left: 0.75in;
+                    margin-right: 0.75in;
+                    height: 48pt;
+                }
+                @frame footer {
+                    -pdf-frame-content: footerContent;
+                    bottom: 0.25in;
+                    margin-left: 0.75in;
+                    margin-right: 0.75in;
+                    height: 0.5in;
+                }
+            }
+
+            @page statementdetail {
+                size: {{ pagesize|default:'letter portrait' }};
+                margin: 0.75in 0.75in 0.5in 0.75in;
+                @frame header {
+                    -pdf-frame-content: detailHeaderContent;
+                    top: 0.25in;
+                    margin-left: 0.75in;
+                    margin-right: 0.75in;
+                    height: 48pt;
+                }
+                @frame footer {
+                    -pdf-frame-content: footerContent;
+                    bottom: 0.25in;
+                    margin-left: 0.75in;
+                    margin-right: 0.75in;
+                    height: 0.5in;
+                }
+            }
+
+            div.balance_due {
+                font-size: xx-large;
+                text-align:right;
+            }
+    </style>
+</head>
+
+<body>
+    <div id="headerContent">
+        <table style="font-size:large; border-collapse: collapse;">
+            <tr style="border-bottom:1px solid #000;font-size:large;font-weight:bold">
+                <td width=42%>Hidden Pond Condominium Association</td>
+                <td width=23%>Monthly Statement</td>
+                <td width=10%>{{si.account.acct_id}}/{{si.account.orig_id}}</td>
+                <td style=text-align:right width=25%>{{ report_date }}</td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="detailHeaderContent">
+        <table style="font-size:large; border-collapse: collapse;">
+            <tr style="border-bottom:1px solid #000;font-size:large;font-weight:bold">
+                <td width=42%>Hidden Pond Condominium Association</td>
+                <td width=23%>Monthly Statement</td>
+                <td width=10%>{{si.account.acct_id}}/{{si.account.orig_id}}</td>
+                <td style=text-align:right width=25%>{{ report_date }}</td>
+            </tr>
+        </table>
+        <p>
+            <table style="font-size:large;text-align:left;font-weight:bold">
+                <tr>
+                    <td width=15% style="text-align: left">Date</td>
+                    <td width=45% style="text-align: left">Description</td>
+                    <td width=20% style="text-align: right">Amount</td>
+                    <td width=20% style="text-align: right">Balance</td>
+                </tr>
+            </table>
+    </div>
+    <div id="footerContent">
+        <table>
+            <tr style="border-bottom:1px solid #000;"></tr>
+            <tr>
+                <td style="padding-top:3px">{{si.account.acct_id}}/{{si.account.orig_id}}</td>
+                <td style="text-align: right">
+                    Page <pdf:pagenumber>
+                        of
+                        <pdf:pagecount>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <p>
+        Hidden Pond Condominium Association, Inc.<br>
+        2600 Pirates Cove<br>
+        Schaumburg, IL 60173<br>
+        (224) 366-0060
+    </p>
+
+    <br><br><br><br>
+
+    <p style="margin-left:2em;font-size:x-large;">
+        {% for line in si.address %}
+        {{ line }} <br>
+        {% endfor %}
+    </p>
+
+    <pdf:nexttemplate name="statementdetail" />
+
+    <br><br><br><br>
+
+    <div class="balance_due">
+        <b>Balance Due</b>: ${{ si.account.balance|floatformat:2|intcomma }}
+    </div>
+
+    <hr>
+
+    <table style="font-size:large;text-align:left;font-weight:bold">
+        <tr>
+            <td width=15% style="text-align: left">Date</td>
+            <td width=45% style="text-align: left">Description</td>
+            <td width=20% style="text-align: right">Amount</td>
+            <td width=20% style="text-align: right">Balance</td>
+        </tr>
+    </table>
+
+    {% for entry in si.entries %}
+    <table>
+        <tr>
+            <td width=15%>{{ entry.datetime|date:"m/d/Y" }}</td>
+            <td width=45%>{{ entry.memo }}</td>
+            <td width=20% style="text-align:right;">
+                {{ entry.amount|floatformat:2|intcomma }}
+            </td>
+            <td width=20% style="text-align:right;">
+                {{ entry.balance|floatformat:2|intcomma }}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <hr>
+
+    <p style="font-size:x-large;">
+        <br><br>
+        Assessment payments are late after the 1st of the month.  Late charge
+        is applied if payment in full is not received by the 15th of the month.
+    </p>
+</body>
+</html>

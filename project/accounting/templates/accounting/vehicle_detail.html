@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block title %}{{ vehicle }}{% endblock %}
+
+{% block page_title %} {% endblock page_title %}
+
+{% block extra_css %}
+
+<link href="{% static 'css/dataTables.bootstrap.css' %}" rel="stylesheet">
+
+{% endblock extra_css %}
+
+{% block content %}
+
+<div class="panel panel-default">
+    <div class="panel-heading">Vehicle Info</div>
+    <div class="panel-body">
+        <table class="table table-bordered table-condensed table-striped dataTable">
+            <tr>
+                <td><b>Year, Make, and Model:</b></td><td>{{ vehicle.year_make_and_model }}</td>
+            </tr>
+            <tr>
+                <td><b>Color:</b></td><td>{{ vehicle.color }}</td>
+            </tr>
+            <tr>
+                <td><b>License Plate:</b></td><td>{{ vehicle.license_plate }}</td>
+            </tr>
+            <tr>
+                <td><b>Account:</b></td>
+                <td>
+                    {% if vehicle.account %}
+                        <a href="{% url 'accounts:detail' vehicle.account.id  %}">{{ vehicle.account.acct_id}}</a>
+                    {% else %}
+                        None
+                    {% endif %}
+                </td>
+            </tr>
+        </table>
+        
+        {% if user.is_staff %}
+            {% if vehicle.account %}
+                <a class="btn btn-primary" href="{% url 'accounts:vehicle_update' vehicle.id vehicle.account.id %}">Edit Vehicle</a>
+            {% else %}
+                <a class="btn btn-warning" href="{% url 'accounts:vehicle_delete' vehicle.id %}">Delete Vehicle</a>
+            {% endif %}
+            <a class="btn btn-danger"  href="javascript:history.back()">Cancel</a>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock content %}
+

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Search Results{% endblock %}
+
+{% block page_title %}Search Results{% endblock page_title %}
+
+{% block content %}
+<div class="container">
+
+    {% if query %}
+        {% for result in page.object_list %}
+            <li>
+                {{ result.rendered|safe }}
+            </li>
+        {% empty %}
+            <p>No results found for "{{ form.q.value }}".</p>
+        {% endfor %}
+
+        {% if page.has_previous or page.has_next %}
+            <div class="text-center">
+                {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; Previous{% if page.has_previous %}</a>{% endif %}
+                |
+                {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}Next &raquo;{% if page.has_next %}</a>{% endif %}
+            </div>
+        {% endif %}
+    {% else %}
+        {# Show some example queries to run, maybe query syntax, something else? #}
+        Nothing found!
+    {% endif %}
+
+</div>
+
+{% endblock %}

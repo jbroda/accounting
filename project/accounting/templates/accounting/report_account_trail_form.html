@@ -1,0 +1,80 @@
+<div id="accountTrailPanel" class="panel panel-default">
+    
+    <a class="report-anchor" id="account_trail"></a>
+
+    <div class="panel-heading">
+        <a class="panel-title" data-toggle="collapse" href="#account_trail_panel">
+           Account Trail Report 
+        </a>
+    </div>
+
+    <div id="account_trail_panel" class="panel-collapse collapse">
+        <div class="panel-body">
+            <p>This report generates account trail as of of the specified 
+            date. This report is meant to be used to print account summary 
+            to create a paper trail of the accounting records.
+            </p>
+            <small>
+                <ul>
+                    <li> Enter the date as of when account balances should 
+                         be generated.
+                    <li> Press "Get Report"
+                </ul>    
+            </small>
+
+            <form name="account-trail-report-form" 
+                    id="account-trail-report-form" 
+                    class="form-horizontal" role="form">
+                {% csrf_token %} 
+                {% if form.errors %}
+                <div class="panel panel-default">
+                    <div class="panel-body"> {{ form.errors }}
+                    </div>
+                </div> 
+                {% endif %}
+
+                <div class="container">
+                    <div class=col-sm-6>
+                        <div class="form-group">
+                            <label for="account_trail_date" 
+                                   class="col-sm-1 control-label">
+                                        Date</label>
+
+                            <div class="col-sm-7">
+                                <div class="input-group date" 
+                                 id="dtpicker_account_trail"
+                                      data-date-format="MMMM DD, YYYY">
+                                    <input tabindex="7" class="form-control" 
+                                    id="account_trail_date" 
+                                    name="account_trail_date" 
+                                        type="text"
+                                        value="{{ form.date.value|date:'F d, Y'}}" />
+                                    <span class="input-group-addon">
+                                        <span class="fa fa-calendar"></span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-4">
+                                <button tabindex="8" type="submit"
+                                        class="btn btn-block btn-success" 
+                                        title="Get Account Trail Report"
+                                        id="get_at_report">
+                                           Get Report 
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <div class="account_trail-progress" style="display:none">
+                {% include "accounting/report_progress_bar.html" %}
+            </div>
+
+            {% if reports.account_trail %}
+                {% include "accounting/report_list.html" with report_name="Account Trail" report_type="account_trail" %}
+            {% endif %}
+        </div>
+    </div>
+</div>

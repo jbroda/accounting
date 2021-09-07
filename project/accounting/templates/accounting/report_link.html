@@ -1,0 +1,23 @@
+﻿<form style="display: inline;"
+      name="report_delete_form"
+      id="report_delete_form"
+      action="/delete{{report.path}}" 
+      onsubmit="return onDeleteReport($(this));"
+      method="post">
+     {% csrf_token %}
+
+    <a id="report_link" target="_blank" href="{{report.url}}">{{report.name}}</a>
+
+    <input type="hidden" 
+           name="redirect_url" 
+           id="redirect_url"
+           value="/accounting/reports/#{{report_type}}"/>
+
+    <button name="report_delete_btn"
+            id="report_delete_btn" 
+            type="submit" 
+            class="btn btn-danger btn-xs" 
+            title="Delete '{{report.name}}'">
+        <span class="glyphicon glyphicon-remove"></span>
+    </button>
+</form>

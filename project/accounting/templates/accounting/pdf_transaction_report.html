@@ -1,0 +1,92 @@
+<!DOCTYPE>
+
+{% load humanize %}
+
+<html>
+    <head>
+        <title>{{report_type}} Transactions</title>
+        <style type="text/css">
+            @page {
+                size: {{ pagesize|default:'letter portrait' }};
+                margin: 1.5in 1in 0.5in 1in
+                @frame header {
+                    -pdf-frame-content: headerContent;
+                    top: 1in;
+                    margin-left: 1in;
+                    margin-right: 1in;
+                    height: 48pt;
+                }
+                @frame footer {
+                    -pdf-frame-content: footerContent;
+                    bottom: 0.25in;
+                    margin-left: 1in;
+                    margin-right: 1in;
+                    height: 0.25in;
+                }     
+            }
+                
+        </style>
+    </head>
+
+    <body>
+        <div id="headerContent">
+            <table style="font-size:large; border-collapse: collapse;">
+                <tr style="border-bottom:1px solid #000;font-size:large;font-weight:bold">
+                    <td width=45%>Hidden Pond Condominium Association</td>
+                    <td width=20%><b>{{report_type}}</b> Transactions</td>
+                    <td style=text-align:right width=35%>{{ report_range }}</td>
+                </tr>
+            </table>
+            <p>
+            <table style="font-size:large;text-align:left;font-weight:bold">
+                <tr>
+                    <td width=04%>#</td>
+                    <td width=16%>Timestamp</td>
+                    <td width=09%>Date</td>
+                    <td width=10%>Account</td>
+                    <td width=09%>User</td>
+                    <td width=18%>Category</td>
+                    <td width=24%>Memo</td>
+                    <td width=10% style="text-align:right">Amount</td>
+                </tr>
+            </table>
+        </div>
+        <div id="footerContent">
+            <table>
+                <tr>
+                    <td style="text-align: right">Page <pdf:pagenumber> of
+                         <pdf:pagecount> </td>
+                </tr>
+            </table>
+        </div>
+
+        <table>
+            {% for entry in entries %}
+            <tr>
+                <td width=04%>{{ forloop.counter }}</td>
+                <td width=16%>{{ entry.timestamp|date:"m/d/Y H:i:s" }}</td>
+                <td width=09%>{{ entry.datetime|date:"m/d/Y" }}</td>
+                <td width=10%>{{ entry.account.acct_id }}</td>
+                <td width=09%>{{ entry.user }}</td>
+                <td width=18%>{{ entry.category.name }}</td>
+                <td width=24%>{{ entry.memo }}</td>
+                <td width=10% style="text-align:right;">
+                    {{ entry.amount|floatformat:2|intcomma }}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <hr />
+        <br />
+        <h2>
+            {% if report_type == 'Credit' or report_type == 'All' %}
+                <b>Total Credits:</b> {{ total_credits|floatformat:2|intcomma }}
+            {% endif %}
+            <br />
+            {% if report_type == 'Charge' or report_type == 'All' %}
+                <b>Total Charges:</b> {{ total_charges|floatformat:2|intcomma }}
+            {% endif %}
+        </h2>
+    </body>
+</html>
